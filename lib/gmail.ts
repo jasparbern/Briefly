@@ -1,5 +1,6 @@
 import { google } from 'googleapis'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { filterByTopic, type EmailMetadata } from './ai'
 
 function getServiceClient() {
   return createServiceClient(
@@ -27,13 +28,22 @@ export type FetchedEmail = {
   receivedAt: Date | null
 }
 
+type StreamFilter = {
+  mode: 'senders' | 'topic' | 'both'
+  topicDescription: string | null
+}
+
+/** Cap on inbox sample size for topic-mode (per stream-run). */
+const TOPIC_SAMPLE_CAP = 80
+
 /**
- * Fetch emails for one stream of one user. Pulls only senders attached to that stream.
+ * Fetch emails for one stream of one user, based on the stream's filter mode.
  */
 export async function fetchEmailsForStream(
   userId: string,
   streamId: string,
-  lookbackDays: number = 7
+  lookbackDays: number = 7,
+  filter: StreamFilter = { mode: 'senders', topicDescription: null }
 ): Promise<FetchedEmail[]> {
   const supabase = getServiceClient()
 
@@ -42,7 +52,7 @@ export async function fetchEmailsForStream(
     supabase.from('senders').select('*').eq('stream_id', streamId),
   ])
 
-  if (!tokenRow || !senders || senders.length === 0) return []
+  if (!tokenRow) return []
 
   const oauth2Client = getOAuthClient()
   oauth2Client.setCredentials({
@@ -66,54 +76,148 @@ export async function fetchEmailsForStream(
   const gmail = google.gmail({ version: 'v1', auth: oauth2Client })
 
   const cutoff = Math.floor((Date.now() - lookbackDays * 24 * 60 * 60 * 1000) / 1000)
-  const fromQuery = senders.map((s) => `from:${s.email}`).join(' OR ')
-  const query = `(${fromQuery}) after:${cutoff}`
+  const sendersList = senders ?? []
+  const collected = new Map<string, FetchedEmail>()
 
-  const listRes = await gmail.users.messages.list({
-    userId: 'me',
-    q: query,
-    maxResults: 100,
-  })
+  // ---- Sender-mode fetch ----
+  if ((filter.mode === 'senders' || filter.mode === 'both') && sendersList.length > 0) {
+    const fromQuery = sendersList.map((s) => `from:${s.email}`).join(' OR ')
+    const query = `(${fromQuery}) after:${cutoff}`
 
-  const messages = listRes.data.messages ?? []
-  const results: FetchedEmail[] = []
-
-  for (const msg of messages) {
-    if (!msg.id) continue
-
-    const full = await gmail.users.messages.get({
+    const listRes = await gmail.users.messages.list({
       userId: 'me',
-      id: msg.id,
-      format: 'full',
+      q: query,
+      maxResults: 100,
     })
 
-    const headers = full.data.payload?.headers ?? []
-    const from = headers.find((h) => h.name === 'From')?.value ?? ''
-    const subject = headers.find((h) => h.name === 'Subject')?.value ?? '(no subject)'
-    const dateHeader = headers.find((h) => h.name === 'Date')?.value ?? ''
-    const receivedAt = dateHeader ? new Date(dateHeader) : null
-
-    const matchedSender = senders.find((s) =>
-      from.toLowerCase().includes(s.email.toLowerCase())
-    )
-    if (!matchedSender) continue
-
-    const body = extractBody(full.data.payload)
-    const snippet = full.data.snippet ?? body.slice(0, 200)
-
-    results.push({
-      gmailMessageId: msg.id,
-      sender: `${matchedSender.label ?? matchedSender.email} <${from}>`,
-      rawFrom: from,
-      subject,
-      snippet,
-      body: body.slice(0, 3000),
-      instructions: matchedSender.instructions ?? '',
-      receivedAt: receivedAt && !isNaN(receivedAt.getTime()) ? receivedAt : null,
-    })
+    for (const msg of listRes.data.messages ?? []) {
+      if (!msg.id) continue
+      const fetched = await fetchFullEmail(gmail, msg.id, sendersList)
+      if (fetched) collected.set(msg.id, fetched)
+    }
   }
 
-  return results
+  // ---- Topic-mode fetch ----
+  if (filter.mode === 'topic' || filter.mode === 'both') {
+    const description = (filter.topicDescription ?? '').trim()
+    if (description) {
+      // Fetch a broad inbox sample. Skip ids we already collected from sender-mode.
+      const listRes = await gmail.users.messages.list({
+        userId: 'me',
+        q: `after:${cutoff}`,
+        maxResults: TOPIC_SAMPLE_CAP,
+      })
+
+      const candidateIds = (listRes.data.messages ?? [])
+        .map((m) => m.id)
+        .filter((id): id is string => !!id && !collected.has(id))
+
+      // Fetch metadata in parallel for filtering.
+      const metas = await Promise.all(
+        candidateIds.map((id) => fetchMetadata(gmail, id))
+      )
+      const validMetas = metas.filter((m): m is EmailMetadata => m !== null)
+
+      const matchingIds = await filterByTopic(validMetas, description)
+      const matchingSet = new Set(matchingIds)
+
+      // Now pull full bodies for matches only.
+      for (const id of matchingIds) {
+        const full = await fetchFullEmail(gmail, id, sendersList)
+        if (full) {
+          // Override instructions with the topic description for topic-only matches.
+          if (!sendersList.some((s) => full.rawFrom.toLowerCase().includes(s.email.toLowerCase()))) {
+            full.instructions = `Topic the user wants: ${description}`
+          }
+          collected.set(id, full)
+        } else {
+          // No sender match — still surface, with metadata only as the body.
+          const meta = validMetas.find((m) => m.id === id)
+          if (meta) {
+            collected.set(id, {
+              gmailMessageId: id,
+              sender: meta.from,
+              rawFrom: meta.from,
+              subject: meta.subject,
+              snippet: meta.snippet,
+              body: meta.snippet,
+              instructions: `Topic the user wants: ${description}`,
+              receivedAt: meta.receivedAt,
+            })
+          }
+        }
+      }
+      // (matchingSet not used after this point — kept for future debug)
+      void matchingSet
+    }
+  }
+
+  return Array.from(collected.values())
+}
+
+async function fetchMetadata(
+  gmail: ReturnType<typeof google.gmail>,
+  id: string
+): Promise<EmailMetadata | null> {
+  const meta = await gmail.users.messages.get({
+    userId: 'me',
+    id,
+    format: 'metadata',
+    metadataHeaders: ['From', 'Subject', 'Date'],
+  })
+  const headers = meta.data.payload?.headers ?? []
+  const from = headers.find((h) => h.name === 'From')?.value ?? ''
+  const subject = headers.find((h) => h.name === 'Subject')?.value ?? '(no subject)'
+  const dateHeader = headers.find((h) => h.name === 'Date')?.value ?? ''
+  const receivedAt = dateHeader ? new Date(dateHeader) : null
+  if (!from) return null
+  return {
+    id,
+    from,
+    subject,
+    snippet: meta.data.snippet ?? '',
+    receivedAt: receivedAt && !isNaN(receivedAt.getTime()) ? receivedAt : null,
+  }
+}
+
+async function fetchFullEmail(
+  gmail: ReturnType<typeof google.gmail>,
+  id: string,
+  senders: { email: string; label?: string | null; instructions?: string | null }[]
+): Promise<FetchedEmail | null> {
+  const full = await gmail.users.messages.get({
+    userId: 'me',
+    id,
+    format: 'full',
+  })
+
+  const headers = full.data.payload?.headers ?? []
+  const from = headers.find((h) => h.name === 'From')?.value ?? ''
+  const subject = headers.find((h) => h.name === 'Subject')?.value ?? '(no subject)'
+  const dateHeader = headers.find((h) => h.name === 'Date')?.value ?? ''
+  const receivedAt = dateHeader ? new Date(dateHeader) : null
+
+  // Find which configured sender (if any) this matches — used to set instructions + display name.
+  const matchedSender = senders.find((s) =>
+    from.toLowerCase().includes(s.email.toLowerCase())
+  )
+
+  // For sender-mode this is required; for topic-mode caller handles non-matching case.
+  if (!matchedSender) return null
+
+  const body = extractBody(full.data.payload)
+  const snippet = full.data.snippet ?? body.slice(0, 200)
+
+  return {
+    gmailMessageId: id,
+    sender: `${matchedSender.label ?? matchedSender.email} <${from}>`,
+    rawFrom: from,
+    subject,
+    snippet,
+    body: body.slice(0, 3000),
+    instructions: matchedSender.instructions ?? '',
+    receivedAt: receivedAt && !isNaN(receivedAt.getTime()) ? receivedAt : null,
+  }
 }
 
 function extractBody(payload: any): string {

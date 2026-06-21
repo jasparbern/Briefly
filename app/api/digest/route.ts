@@ -22,6 +22,8 @@ type StreamRow = {
   lookback_days: number
   delivery_email: string | null
   paused: boolean
+  filter_mode: 'senders' | 'topic' | 'both'
+  topic_description: string | null
 }
 
 // GET /api/digest — called by Vercel cron once a day.
@@ -118,7 +120,15 @@ async function processStream(stream: StreamRow) {
 
   const deliveryEmail = stream.delivery_email || accountEmail
 
-  const emails = await fetchEmailsForStream(stream.user_id, stream.id, stream.lookback_days ?? 7)
+  const emails = await fetchEmailsForStream(
+    stream.user_id,
+    stream.id,
+    stream.lookback_days ?? 7,
+    {
+      mode: stream.filter_mode ?? 'senders',
+      topicDescription: stream.topic_description,
+    }
+  )
   const digest = await generateDigest(emails)
 
   // Stamp the stream name onto the subject so multi-stream users can tell digests apart.

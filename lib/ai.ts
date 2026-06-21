@@ -122,3 +122,76 @@ function parseDigest(raw: string): Digest {
     body: body || raw.trim(),
   }
 }
+
+/* ----- Topic-mode filtering ----- */
+
+export type EmailMetadata = {
+  /** Stable id (Gmail message id) so the caller can map back to the full message. */
+  id: string
+  from: string
+  subject: string
+  snippet: string
+  receivedAt: Date | null
+}
+
+/**
+ * Given a list of email metadata and a free-text description of what the user cares about,
+ * returns the subset of ids that match. Used for topic-mode streams.
+ *
+ * Uses Haiku for cost (this is a filter, not a creative task).
+ */
+export async function filterByTopic(
+  emails: EmailMetadata[],
+  description: string
+): Promise<string[]> {
+  if (emails.length === 0) return []
+  const desc = description.trim()
+  if (!desc) return emails.map((e) => e.id)
+
+  // Number the emails so the model can reference them by index. Keep snippet short.
+  const lines = emails
+    .map((e, i) => {
+      const snippet = (e.snippet ?? '').slice(0, 180).replace(/\s+/g, ' ')
+      return `${i + 1}. From: ${e.from} | Subject: ${e.subject} | Snippet: ${snippet}`
+    })
+    .join('\n')
+
+  const prompt = `You filter emails by topic.
+
+User wants emails about: "${desc}"
+
+Here are recent emails (numbered):
+${lines}
+
+Return ONLY a JSON array of the numbers (1-based) of emails that match the user's topic. Be inclusive if it's borderline — recall over precision. Reply with the array only, no prose, no markdown fences.
+
+Examples of valid replies:
+[1, 4, 7]
+[]
+[3]`
+
+  const message = await client.messages.create({
+    model: 'claude-haiku-4-5',
+    max_tokens: 256,
+    messages: [{ role: 'user', content: prompt }],
+  })
+
+  const text = message.content[0]?.type === 'text' ? message.content[0].text : '[]'
+  let nums: unknown
+  try {
+    nums = JSON.parse(text.trim().replace(/^```(?:json)?\s*/i, '').replace(/```$/m, '').trim())
+  } catch {
+    return []
+  }
+  if (!Array.isArray(nums)) return []
+
+  const picked = new Set<string>()
+  for (const n of nums) {
+    const idx = Number(n) - 1
+    if (Number.isInteger(idx) && idx >= 0 && idx < emails.length) {
+      picked.add(emails[idx].id)
+    }
+  }
+  return Array.from(picked)
+}
+

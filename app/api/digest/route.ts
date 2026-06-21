@@ -103,6 +103,9 @@ async function processUserDigest(userId: string) {
 
   await sendDigestEmail(email, digest)
 
-  // Archive it
-  await supabase.from('digests').insert({ user_id: userId, content: digest })
+  // Archive it. Store the body so old viewers keep working; subject lives in metadata.
+  await supabase.from('digests').insert({
+    user_id: userId,
+    content: `SUBJECT: ${digest.subject}\n\n${digest.body}`,
+  })
 }

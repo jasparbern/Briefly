@@ -1,24 +1,36 @@
 'use client'
 
-import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
+const previewMode =
+  !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  process.env.NEXT_PUBLIC_SUPABASE_URL.includes('REPLACE_ME')
+
 export default function Home() {
   const [loading, setLoading] = useState(false)
-  const [checking, setChecking] = useState(true)
+  const [checking, setChecking] = useState(!previewMode)
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) router.replace('/dashboard')
-      else setChecking(false)
+    if (previewMode) return
+    import('@/lib/supabase/client').then(({ createClient }) => {
+      const supabase = createClient()
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        if (user) router.replace('/dashboard')
+        else setChecking(false)
+      })
     })
-  }, [])
+  }, [router])
 
   async function signInWithGoogle() {
+    if (previewMode) {
+      alert('Preview mode — add your Supabase keys in .env.local to enable sign-in.')
+      return
+    }
     setLoading(true)
+    const { createClient } = await import('@/lib/supabase/client')
+    const supabase = createClient()
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

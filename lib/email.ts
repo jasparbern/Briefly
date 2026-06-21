@@ -20,6 +20,8 @@ export async function sendDigestEmail(to: string, digestText: string): Promise<v
   .gray { color: #9ca3af; }
   ul { margin: 0; padding-left: 20px; }
   li { margin-bottom: 6px; font-size: 14px; line-height: 1.5; }
+  .section-empty { margin: 0; font-size: 14px; color: #6b7280; font-style: italic; }
+  strong { font-weight: 600; }
   .footer { margin-top: 40px; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 16px; }
 </style>
 </head>
@@ -49,34 +51,66 @@ function convertToHtml(text: string): string {
     '⚪': 'gray',
   }
 
+  // Escape HTML, then re-apply **bold** as <strong>.
+  function inlineFormat(s: string): string {
+    const escaped = s
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+    return escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  }
+
   const lines = text.split('\n')
   let html = ''
   let inSection = false
+  let listOpen = false
+
+  function closeList() {
+    if (listOpen) {
+      html += '</ul>'
+      listOpen = false
+    }
+  }
+
+  function closeSection() {
+    closeList()
+    if (inSection) {
+      html += '</div>'
+      inSection = false
+    }
+  }
 
   for (const line of lines) {
     const trimmed = line.trim()
     if (!trimmed) {
-      if (inSection) html += '</ul>'
-      inSection = false
+      closeList()
       continue
     }
 
-    const emoji = trimmed[0] + trimmed[1]
+    // Emojis are surrogate pairs in UTF-16 — first 2 code units = the emoji char
+    const emoji = trimmed.slice(0, 2)
     const color = sectionColors[emoji]
 
     if (color) {
-      if (inSection) html += '</ul>'
-      html += `<div class="section"><p class="section-title ${color}">${trimmed}</p><ul>`
+      closeSection()
+      // Strip markdown bold + the leading emoji+space, then use the rest as title
+      const titleText = trimmed.slice(2).replace(/^\s*/, '').replace(/\*\*/g, '')
+      html += `<div class="section"><p class="section-title ${color}">${emoji} ${inlineFormat(titleText)}</p>`
       inSection = true
-    } else if (trimmed.startsWith('•') || trimmed.startsWith('-')) {
-      const content = trimmed.replace(/^[•\-]\s*/, '')
-      html += `<li>${content}</li>`
+    } else if (/^[*•\-]\s/.test(trimmed)) {
+      if (!listOpen) {
+        html += '<ul>'
+        listOpen = true
+      }
+      const content = trimmed.replace(/^[*•\-]\s*/, '')
+      html += `<li>${inlineFormat(content)}</li>`
     } else if (inSection) {
-      html += `<li>${trimmed}</li>`
+      // Plain paragraph text inside a section (e.g. "Nothing this week.")
+      closeList()
+      html += `<p class="section-empty">${inlineFormat(trimmed)}</p>`
     }
   }
 
-  if (inSection) html += '</ul></div>'
-
+  closeSection()
   return html
 }

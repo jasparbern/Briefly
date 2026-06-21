@@ -98,15 +98,26 @@ export default function Dashboard() {
 
   async function sendNow() {
     setSending(true)
-    const res = await fetch('/api/digest', { method: 'POST' })
-    const data = await res.json()
-    setSending(false)
-    if (data.results?.[0]?.status === 'fulfilled') {
-      setSuccessMsg('Digest sent! Check your inbox.')
-    } else {
-      setSuccessMsg('Something went wrong. Check your setup.')
+    try {
+      const res = await fetch('/api/digest', { method: 'POST' })
+      const data = await res.json()
+      const first = data.results?.[0]
+      if (first?.status === 'fulfilled') {
+        setSuccessMsg('Digest sent! Check your inbox.')
+      } else if (first?.error) {
+        // Surface the real error inline (truncate long Anthropic/Gmail messages)
+        const raw = String(first.error)
+        const friendly = raw.length > 240 ? raw.slice(0, 240) + '…' : raw
+        setSuccessMsg(`Error: ${friendly}`)
+      } else {
+        setSuccessMsg('Something went wrong. Check your setup.')
+      }
+    } catch (e) {
+      setSuccessMsg(`Network error: ${e instanceof Error ? e.message : 'unknown'}`)
+    } finally {
+      setSending(false)
     }
-    setTimeout(() => setSuccessMsg(''), 5000)
+    setTimeout(() => setSuccessMsg(''), 12000)
   }
 
   const localHour = new Date(Date.UTC(2000, 0, 1, schedule.hour_utc)).toLocaleTimeString([], {

@@ -16,9 +16,28 @@ function getOAuthClient() {
   )
 }
 
-export async function fetchEmailsForUser(userId: string): Promise<
-  { sender: string; subject: string; body: string; instructions: string }[]
-> {
+export type FetchedEmail = {
+  /** Gmail message id, used to dedupe in `digest_emails`. */
+  gmailMessageId: string
+  /** Display sender used by the AI prompt (label + raw from). */
+  sender: string
+  /** Raw From header (used for direct linkout). */
+  rawFrom: string
+  subject: string
+  /** Short snippet (~140 chars) for the "what did the AI read?" view. */
+  snippet: string
+  /** Body trimmed to 3000 chars to fit the prompt. */
+  body: string
+  /** Per-sender instructions copied from `senders.instructions`. */
+  instructions: string
+  /** Received timestamp from the email Date header. */
+  receivedAt: Date | null
+}
+
+export async function fetchEmailsForUser(
+  userId: string,
+  lookbackDays: number = 7
+): Promise<FetchedEmail[]> {
   const supabase = getServiceClient()
 
   const [{ data: tokenRow }, { data: senders }] = await Promise.all([
@@ -47,10 +66,10 @@ export async function fetchEmailsForUser(userId: string): Promise<
 
   const gmail = google.gmail({ version: 'v1', auth: oauth2Client })
 
-  // Build query: emails from any watched sender in the last 7 days
-  const sevenDaysAgo = Math.floor((Date.now() - 7 * 24 * 60 * 60 * 1000) / 1000)
+  // Build query: emails from any watched sender within the lookback window.
+  const cutoff = Math.floor((Date.now() - lookbackDays * 24 * 60 * 60 * 1000) / 1000)
   const fromQuery = senders.map((s) => `from:${s.email}`).join(' OR ')
-  const query = `(${fromQuery}) after:${sevenDaysAgo}`
+  const query = `(${fromQuery}) after:${cutoff}`
 
   const listRes = await gmail.users.messages.list({
     userId: 'me',
@@ -59,7 +78,7 @@ export async function fetchEmailsForUser(userId: string): Promise<
   })
 
   const messages = listRes.data.messages ?? []
-  const results: { sender: string; subject: string; body: string; instructions: string }[] = []
+  const results: FetchedEmail[] = []
 
   for (const msg of messages) {
     if (!msg.id) continue
@@ -73,21 +92,27 @@ export async function fetchEmailsForUser(userId: string): Promise<
     const headers = full.data.payload?.headers ?? []
     const from = headers.find((h) => h.name === 'From')?.value ?? ''
     const subject = headers.find((h) => h.name === 'Subject')?.value ?? '(no subject)'
+    const dateHeader = headers.find((h) => h.name === 'Date')?.value ?? ''
+    const receivedAt = dateHeader ? new Date(dateHeader) : null
 
-    // Find which sender this matches
+    // Find which sender this matches.
     const matchedSender = senders.find((s) =>
       from.toLowerCase().includes(s.email.toLowerCase())
     )
     if (!matchedSender) continue
 
-    // Extract plain text body
     const body = extractBody(full.data.payload)
+    const snippet = full.data.snippet ?? body.slice(0, 200)
 
     results.push({
+      gmailMessageId: msg.id,
       sender: `${matchedSender.label ?? matchedSender.email} <${from}>`,
+      rawFrom: from,
       subject,
-      body: body.slice(0, 3000), // cap per email to avoid huge prompts
+      snippet,
+      body: body.slice(0, 3000),
       instructions: matchedSender.instructions ?? '',
+      receivedAt: receivedAt && !isNaN(receivedAt.getTime()) ? receivedAt : null,
     })
   }
 

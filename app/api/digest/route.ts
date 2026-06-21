@@ -12,7 +12,9 @@ function getServiceClient() {
   )
 }
 
-// GET /api/digest — called by Vercel cron every hour
+// GET /api/digest — called by Vercel cron once a day.
+// Free tier only allows daily cron, so we send to every user scheduled for today,
+// ignoring the per-user hour_utc preference for now.
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
   const secret = authHeader?.replace('Bearer ', '')
@@ -23,13 +25,11 @@ export async function GET(request: Request) {
   const supabase = getServiceClient()
   const now = new Date()
   const dayOfWeek = now.getDay()
-  const hourUtc = now.getUTCHours()
 
   const { data: schedules } = await supabase
     .from('digest_schedule')
     .select('user_id')
     .eq('day_of_week', dayOfWeek)
-    .eq('hour_utc', hourUtc)
 
   const userIds = (schedules ?? []).map((s: { user_id: string }) => s.user_id)
   const results = await Promise.allSettled(userIds.map(processUserDigest))
@@ -67,13 +67,11 @@ export async function POST(request: Request) {
     const supabase = getServiceClient()
     const now = new Date()
     const dayOfWeek = now.getDay()
-    const hourUtc = now.getUTCHours()
 
     const { data: schedules } = await supabase
       .from('digest_schedule')
       .select('user_id')
       .eq('day_of_week', dayOfWeek)
-      .eq('hour_utc', hourUtc)
 
     userIds = (schedules ?? []).map((s) => s.user_id)
   }

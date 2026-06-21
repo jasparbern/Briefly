@@ -21,6 +21,14 @@ Round 2 (after first successful test):
 - Payment page + free trial
 - Cybersecurity hardening
 
+Round 4 (architectural — major):
+- Don't be sender-focused. Let users filter on content/topic too, not just sender.
+- Multiple independent "streams" per user is the DEFAULT — not a Pro feature.
+  - Each stream has its own filter rules, cadence, lookback, delivery email
+  - Example: "school stuff" weekly + "packages" daily as two separate digests
+  - They should NOT merge into one email
+- Implies data model refactor: User → many Streams (each with senders/rules + schedule + digests)
+
 Round 3 (after first real digest landed):
 - Email subject needs work (more specific than "Your weekly digest")
 - Email formatting overall feels lifeless — punchier copy, headlines that pull you in

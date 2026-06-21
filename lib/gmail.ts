@@ -17,32 +17,29 @@ function getOAuthClient() {
 }
 
 export type FetchedEmail = {
-  /** Gmail message id, used to dedupe in `digest_emails`. */
   gmailMessageId: string
-  /** Display sender used by the AI prompt (label + raw from). */
   sender: string
-  /** Raw From header (used for direct linkout). */
   rawFrom: string
   subject: string
-  /** Short snippet (~140 chars) for the "what did the AI read?" view. */
   snippet: string
-  /** Body trimmed to 3000 chars to fit the prompt. */
   body: string
-  /** Per-sender instructions copied from `senders.instructions`. */
   instructions: string
-  /** Received timestamp from the email Date header. */
   receivedAt: Date | null
 }
 
-export async function fetchEmailsForUser(
+/**
+ * Fetch emails for one stream of one user. Pulls only senders attached to that stream.
+ */
+export async function fetchEmailsForStream(
   userId: string,
+  streamId: string,
   lookbackDays: number = 7
 ): Promise<FetchedEmail[]> {
   const supabase = getServiceClient()
 
   const [{ data: tokenRow }, { data: senders }] = await Promise.all([
     supabase.from('gmail_tokens').select('*').eq('user_id', userId).single(),
-    supabase.from('senders').select('*').eq('user_id', userId),
+    supabase.from('senders').select('*').eq('stream_id', streamId),
   ])
 
   if (!tokenRow || !senders || senders.length === 0) return []
@@ -54,19 +51,20 @@ export async function fetchEmailsForUser(
     expiry_date: tokenRow.expiry_date,
   })
 
-  // Refresh token if needed and save new one
   oauth2Client.on('tokens', async (tokens) => {
     if (tokens.access_token) {
-      await supabase.from('gmail_tokens').update({
-        access_token: tokens.access_token,
-        expiry_date: tokens.expiry_date,
-      }).eq('user_id', userId)
+      await supabase
+        .from('gmail_tokens')
+        .update({
+          access_token: tokens.access_token,
+          expiry_date: tokens.expiry_date,
+        })
+        .eq('user_id', userId)
     }
   })
 
   const gmail = google.gmail({ version: 'v1', auth: oauth2Client })
 
-  // Build query: emails from any watched sender within the lookback window.
   const cutoff = Math.floor((Date.now() - lookbackDays * 24 * 60 * 60 * 1000) / 1000)
   const fromQuery = senders.map((s) => `from:${s.email}`).join(' OR ')
   const query = `(${fromQuery}) after:${cutoff}`
@@ -95,7 +93,6 @@ export async function fetchEmailsForUser(
     const dateHeader = headers.find((h) => h.name === 'Date')?.value ?? ''
     const receivedAt = dateHeader ? new Date(dateHeader) : null
 
-    // Find which sender this matches.
     const matchedSender = senders.find((s) =>
       from.toLowerCase().includes(s.email.toLowerCase())
     )
@@ -121,17 +118,14 @@ export async function fetchEmailsForUser(
 
 function extractBody(payload: any): string {
   if (!payload) return ''
-
   if (payload.mimeType === 'text/plain' && payload.body?.data) {
     return Buffer.from(payload.body.data, 'base64').toString('utf-8')
   }
-
   if (payload.parts) {
     for (const part of payload.parts) {
       const text = extractBody(part)
       if (text) return text
     }
   }
-
   return ''
 }

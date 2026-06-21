@@ -1,5 +1,5 @@
 import { createClient as createServiceClient } from '@supabase/supabase-js'
-import { fetchEmailsForUser } from '@/lib/gmail'
+import { fetchEmailsForStream } from '@/lib/gmail'
 import { generateDigest } from '@/lib/ai'
 import { sendDigestEmail } from '@/lib/email'
 import { NextResponse } from 'next/server'
@@ -12,11 +12,20 @@ function getServiceClient() {
   )
 }
 
+type StreamRow = {
+  id: string
+  user_id: string
+  name: string
+  cadence: 'daily' | 'weekly' | 'custom'
+  day_of_week: number
+  custom_days: number[] | null
+  lookback_days: number
+  delivery_email: string | null
+  paused: boolean
+}
+
 // GET /api/digest — called by Vercel cron once a day.
-// Picks every user whose cadence fires today:
-//   - daily: always
-//   - weekly: when today === day_of_week
-//   - custom: when today is in custom_days[]
+// Selects every (unpaused) stream whose cadence fires today.
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
   const secret = authHeader?.replace('Bearer ', '')
@@ -25,120 +34,115 @@ export async function GET(request: Request) {
   }
 
   const supabase = getServiceClient()
-  const userIds = await selectUsersForToday(supabase)
-  const results = await Promise.allSettled(userIds.map(processUserDigest))
+  const streams = await selectStreamsForToday(supabase)
+  const results = await Promise.allSettled(streams.map(processStream))
 
   return NextResponse.json({
-    processed: userIds.length,
+    processed: streams.length,
     results: results.map((r, i) => ({
-      userId: userIds[i],
+      streamId: streams[i].id,
+      userId: streams[i].user_id,
       status: r.status,
       error: r.status === 'rejected' ? String((r as PromiseRejectedResult).reason) : undefined,
     })),
   })
 }
 
-type ScheduleRow = {
-  user_id: string
-  day_of_week: number
-  cadence: 'daily' | 'weekly' | 'custom' | null
-  custom_days: number[] | null
-}
-
-async function selectUsersForToday(supabase: ReturnType<typeof getServiceClient>): Promise<string[]> {
-  const today = new Date().getDay()
-  const { data } = await supabase
-    .from('digest_schedule')
-    .select('user_id, day_of_week, cadence, custom_days')
-
-  const rows = (data ?? []) as ScheduleRow[]
-
-  return rows
-    .filter((r) => {
-      const cadence = r.cadence ?? 'weekly'
-      if (cadence === 'daily') return true
-      if (cadence === 'weekly') return r.day_of_week === today
-      if (cadence === 'custom') return (r.custom_days ?? []).includes(today)
-      return false
-    })
-    .map((r) => r.user_id)
-}
-
-// POST /api/digest — called manually from dashboard
+// POST /api/digest — manual trigger from the dashboard.
+// Body: { streamId } (optional). If omitted, fires every stream for the logged-in user.
 export async function POST(request: Request) {
   const authHeader = request.headers.get('authorization')
-  const isManual = authHeader === null // manual trigger from dashboard uses session
+  const isManual = authHeader === null
 
-  let userIds: string[]
+  let streams: StreamRow[]
 
   if (isManual) {
-    // Manual trigger: only run for the logged-in user
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const userSupabase = await createClient()
+    const { data: { user } } = await userSupabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
-    userIds = [user.id]
+
+    let streamId: string | undefined
+    try {
+      const body = await request.json()
+      streamId = body?.streamId
+    } catch {
+      // No body — fire all streams.
+    }
+
+    const service = getServiceClient()
+    let q = service.from('streams').select('*').eq('user_id', user.id).eq('paused', false)
+    if (streamId) q = q.eq('id', streamId)
+    const { data } = await q
+    streams = (data ?? []) as StreamRow[]
   } else {
-    // Cron: verify secret, then pick users whose cadence fires today.
     const secret = authHeader?.replace('Bearer ', '')
     if (secret !== process.env.CRON_SECRET) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
-    userIds = await selectUsersForToday(getServiceClient())
+    streams = await selectStreamsForToday(getServiceClient())
   }
 
-  const results = await Promise.allSettled(
-    userIds.map((userId) => processUserDigest(userId))
-  )
+  const results = await Promise.allSettled(streams.map(processStream))
 
   return NextResponse.json({
-    processed: userIds.length,
+    processed: streams.length,
     results: results.map((r, i) => ({
-      userId: userIds[i],
+      streamId: streams[i].id,
+      userId: streams[i].user_id,
       status: r.status,
-      error: r.status === 'rejected' ? String(r.reason) : undefined,
+      error: r.status === 'rejected' ? String((r as PromiseRejectedResult).reason) : undefined,
     })),
   })
 }
 
-async function processUserDigest(userId: string) {
+async function selectStreamsForToday(supabase: ReturnType<typeof getServiceClient>): Promise<StreamRow[]> {
+  const today = new Date().getDay()
+  const { data } = await supabase.from('streams').select('*').eq('paused', false)
+  const rows = (data ?? []) as StreamRow[]
+
+  return rows.filter((r) => {
+    const cadence = r.cadence ?? 'weekly'
+    if (cadence === 'daily') return true
+    if (cadence === 'weekly') return r.day_of_week === today
+    if (cadence === 'custom') return (r.custom_days ?? []).includes(today)
+    return false
+  })
+}
+
+async function processStream(stream: StreamRow) {
   const supabase = getServiceClient()
 
-  // Get user email + optional delivery override.
-  const { data: userData } = await supabase.auth.admin.getUserById(userId)
+  const { data: userData } = await supabase.auth.admin.getUserById(stream.user_id)
   const accountEmail = userData.user?.email
   if (!accountEmail) throw new Error('No email for user')
 
-  const { data: scheduleRow } = await supabase
-    .from('digest_schedule')
-    .select('lookback_days, delivery_email')
-    .eq('user_id', userId)
-    .maybeSingle()
+  const deliveryEmail = stream.delivery_email || accountEmail
 
-  const lookbackDays = scheduleRow?.lookback_days ?? 7
-  const deliveryEmail = scheduleRow?.delivery_email || accountEmail
-
-  const emails = await fetchEmailsForUser(userId, lookbackDays)
+  const emails = await fetchEmailsForStream(stream.user_id, stream.id, stream.lookback_days ?? 7)
   const digest = await generateDigest(emails)
 
-  await sendDigestEmail(deliveryEmail, digest)
+  // Stamp the stream name onto the subject so multi-stream users can tell digests apart.
+  const subject = stream.name && stream.name !== 'Default'
+    ? `${digest.subject.replace(/^📬 Briefly[—\-: ]*/, '📬 Briefly · ' + stream.name + ' — ')}`
+    : digest.subject
 
-  // Archive the digest. Capture id so we can link processed emails to it.
+  await sendDigestEmail(deliveryEmail, { subject, body: digest.body })
+
   const { data: digestRow } = await supabase
     .from('digests')
     .insert({
-      user_id: userId,
-      content: `SUBJECT: ${digest.subject}\n\n${digest.body}`,
+      user_id: stream.user_id,
+      stream_id: stream.id,
+      content: `SUBJECT: ${subject}\n\n${digest.body}`,
     })
     .select('id')
     .single()
 
-  // Save each processed email for the "what did the AI read?" view.
-  // Upsert so re-runs don't duplicate, and so we can later attribute to the newest digest.
   if (digestRow && emails.length > 0) {
     await supabase.from('digest_emails').upsert(
       emails.map((e) => ({
-        user_id: userId,
+        user_id: stream.user_id,
+        stream_id: stream.id,
         digest_id: digestRow.id,
         gmail_message_id: e.gmailMessageId,
         sender: e.rawFrom,

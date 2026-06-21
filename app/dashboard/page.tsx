@@ -101,6 +101,29 @@ function DashboardInner() {
     router.replace('/')
   }
 
+  async function exportData() {
+    window.location.href = '/api/account/export'
+  }
+
+  async function deleteAccount() {
+    const ok = window.confirm(
+      'Delete your account and erase every stream, sender, schedule, and digest? This cannot be undone.'
+    )
+    if (!ok) return
+    const ok2 = window.confirm(
+      'Last chance. This will sign you out and remove all your data within 24 hours. Continue?'
+    )
+    if (!ok2) return
+    const res = await fetch('/api/account', { method: 'DELETE' })
+    if (res.ok) {
+      await supabase.auth.signOut()
+      router.replace('/')
+    } else {
+      const data = await res.json().catch(() => ({}))
+      showFlash(`Could not delete account: ${data.error ?? 'unknown error'}`, 'bad')
+    }
+  }
+
   async function createStream() {
     const name = window.prompt('Name this stream (e.g. School, Packages, Soccer league):')
     if (!name?.trim()) return
@@ -210,6 +233,33 @@ function DashboardInner() {
             ))}
           </div>
         </section>
+
+        {/* Account */}
+        <section className="bg-white rounded-2xl border border-gray-200 p-6">
+          <h2 className="text-base font-semibold mb-1 text-gray-900">Account</h2>
+          <p className="text-sm text-gray-600 mb-5">
+            Download a copy of everything Briefly has on you, or delete your account.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={exportData}
+              className="text-sm border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Export my data
+            </button>
+            <button
+              onClick={deleteAccount}
+              className="text-sm border border-red-200 text-red-600 px-4 py-2 rounded-lg hover:bg-red-50 transition-colors"
+            >
+              Delete my account
+            </button>
+          </div>
+        </section>
+
+        <footer className="text-center text-xs text-gray-400 pt-6 space-x-4">
+          <a href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</a>
+          <a href="/terms" className="hover:text-gray-600 transition-colors">Terms</a>
+        </footer>
 
       </div>
     </div>

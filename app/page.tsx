@@ -155,8 +155,10 @@ export default function Home() {
         </button>
       </section>
 
-      <footer className="text-center text-xs text-gray-400 py-6">
-        © {new Date().getFullYear()} Briefly
+      <footer className="text-center text-xs text-gray-400 py-6 space-x-4">
+        <span>© {new Date().getFullYear()} Briefly</span>
+        <a href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</a>
+        <a href="/terms" className="hover:text-gray-600 transition-colors">Terms</a>
       </footer>
     </main>
   )

@@ -21,6 +21,21 @@ Round 2 (after first successful test):
 - Payment page + free trial
 - Cybersecurity hardening
 
+Round 5 (signup blocker — high priority when ready):
+- New users get "doesn't comply with Google's OAuth 2.0 policy" when trying to sign in.
+- Root cause: our Google OAuth app is unverified; only emails on the test-users list can sign in.
+- Three paths:
+  (a) Add specific test users to the Google Cloud audience page (quick, but caps at 100 manual users).
+  (b) Submit for Google OAuth verification (free, takes 2-6 weeks). Requirements:
+      - Working privacy policy URL
+      - Working terms of service URL
+      - Branded OAuth consent screen with logo
+      - Demo video of the gmail.readonly scope being used
+      - Domain ownership verified in Google Search Console
+      - App homepage describes the product clearly
+  (c) Switch to a less-restricted scope (gmail.metadata) — but that loses access to email body, so digests stop working.
+- Recommended: (a) for friends + early users, queue (b) for after the UI polish bucket.
+
 Round 4 (architectural — major):
 - Don't be sender-focused. Let users filter on content/topic too, not just sender.
 - Multiple independent "streams" per user is the DEFAULT — not a Pro feature.

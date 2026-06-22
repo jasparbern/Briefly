@@ -1,12 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function PricingPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [needsSignIn, setNeedsSignIn] = useState(false)
   const [alreadySubscribed, setAlreadySubscribed] = useState(false)
+  const [tier, setTier] = useState<'free' | 'pro' | null>(null)
+
+  useEffect(() => {
+    fetch('/api/account/tier')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.tier) setTier(d.tier) })
+      .catch(() => {})
+  }, [])
 
   async function startCheckout() {
     setLoading(true)
@@ -118,7 +126,7 @@ export default function PricingPage() {
                   <p className="mt-2 text-white/70 text-sm">For real use.</p>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--green-600)] text-white text-[10px] font-semibold uppercase tracking-wider">
-                  14-day free trial
+                  {tier === 'pro' ? 'Current plan' : '14-day free trial'}
                 </span>
               </div>
               <div className="mt-5 flex items-baseline gap-1">
@@ -133,15 +141,26 @@ export default function PricingPage() {
                 <Tick dark>AI topic-mode filtering</Tick>
                 <Tick dark>Email format customization (soon)</Tick>
               </ul>
-              <button
-                type="button"
-                onClick={startCheckout}
-                disabled={loading}
-                className="mt-7 inline-flex justify-center items-center gap-2 rounded-xl bg-[var(--green-600)] hover:bg-[var(--green-700)] text-white font-semibold py-3 transition-colors disabled:opacity-60"
-              >
-                {loading ? 'Starting checkout…' : 'Start 14-day trial'}
-              </button>
-              <p className="mt-3 text-xs text-white/50 text-center">No card required to start. Cancel anytime.</p>
+              {tier === 'pro' ? (
+                <a
+                  href="/dashboard"
+                  className="mt-7 inline-flex justify-center items-center gap-2 rounded-xl bg-[var(--green-600)] hover:bg-[var(--green-700)] text-white font-semibold py-3 transition-colors"
+                >
+                  Go to dashboard
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onClick={startCheckout}
+                  disabled={loading}
+                  className="mt-7 inline-flex justify-center items-center gap-2 rounded-xl bg-[var(--green-600)] hover:bg-[var(--green-700)] text-white font-semibold py-3 transition-colors disabled:opacity-60"
+                >
+                  {loading ? 'Starting checkout…' : 'Start 14-day trial'}
+                </button>
+              )}
+              <p className="mt-3 text-xs text-white/50 text-center">
+                {tier === 'pro' ? 'You can manage billing from the dashboard.' : 'No card required to start. Cancel anytime.'}
+              </p>
             </div>
           </article>
         </div>

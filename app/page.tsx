@@ -163,8 +163,8 @@ function Hero({ onSignIn, loading }: { onSignIn: () => void; loading: boolean })
             <br />
             <em className="text-[var(--green-700)]">summed up</em> for you.
           </h1>
-          <p className="mt-6 text-lg text-[var(--ink-soft)] max-w-md text-pretty">
-            Pick a few senders. We read them. You read one short recap with the dates, the dollars, and the stuff you actually need to do.
+          <p className="mt-6 text-lg text-[var(--ink)] max-w-md text-pretty">
+            Pick the senders that matter. Get one short recap each week with the dates, dollars, and forms you can&apos;t miss.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -285,8 +285,8 @@ function BeforeAfter() {
           <h2 className="font-display text-4xl md:text-5xl leading-[1.02] tracking-tight text-balance mt-2">
             <em className="text-[var(--green-700)]">One</em> worth reading.
           </h2>
-          <p className="mt-5 text-[var(--ink-soft)] text-pretty">
-            The example below is one parent&apos;s school inbox. Briefly works the same way for work updates, newsletters, package alerts, or anything you point it at.
+          <p className="mt-5 text-[var(--ink)] text-pretty">
+            The example below is a school inbox. Works the same for work, newsletters, packages, anything.
           </p>
         </div>
 
@@ -335,8 +335,8 @@ function Sample() {
           <h2 className="font-display text-4xl md:text-5xl leading-[1.05] text-balance">
             What lands in your inbox <em className="text-[var(--green-700)]">Sunday morning</em>.
           </h2>
-          <p className="mt-5 text-[var(--ink-soft)] text-pretty">
-            Short bullets. Bold dates. The dollar amount you need to send. The forms you need to sign. No filler.
+          <p className="mt-5 text-[var(--ink)] text-pretty">
+            Short bullets. Bold dates. The dollar amounts. No filler.
           </p>
           <ul className="mt-6 space-y-2.5 text-sm">
             {[
@@ -404,8 +404,8 @@ function Streams() {
           <h2 className="font-display text-4xl md:text-5xl leading-[1.05] text-balance">
             One inbox. <em className="text-[var(--green-700)]">A digest for each thing.</em>
           </h2>
-          <p className="mt-4 text-[var(--ink-soft)] text-pretty">
-            Different rhythms for different stuff. School news on Sundays. Work updates daily. Package alerts in the morning. Each one its own recap, on its own schedule.
+          <p className="mt-4 text-[var(--ink)] text-pretty">
+            School on Sundays. Work daily. Packages in the morning. Each one a separate digest, on its own schedule.
           </p>
         </div>
 
@@ -470,7 +470,7 @@ function How() {
                   <span className="font-display text-2xl italic text-[var(--green-700)] tnum">0{i + 1}</span>
                 </div>
                 <h3 className="mt-5 text-base font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm text-[var(--ink-soft)] text-pretty leading-relaxed">{s.body}</p>
+                <p className="mt-2 text-sm text-[var(--ink)] text-pretty leading-relaxed">{s.body}</p>
               </div>
             </div>
           ))}
@@ -525,7 +525,7 @@ function Faq() {
                 <span>{it.q}</span>
                 <span aria-hidden="true" className="ml-4 text-[var(--ink-mute)] transition-transform group-open:rotate-45 text-xl leading-none">+</span>
               </summary>
-              <p className="mt-3 text-sm text-[var(--ink-soft)] leading-relaxed text-pretty">{it.a}</p>
+              <p className="mt-3 text-sm text-[var(--ink)] leading-relaxed text-pretty">{it.a}</p>
             </details>
           ))}
         </div>

@@ -7,8 +7,8 @@
   --bg-soft: #f8faf9;     /* off-white with a green undertone */
   --bg-deep: #0b1410;      /* near-black, slight green tint */
   --ink: #0c1812;          /* primary text */
-  --ink-soft: #4a5a52;     /* secondary text */
-  --ink-mute: #93a59b;     /* tertiary text */
+  --ink-soft: #2f3a35;     /* secondary text — darker for readability */
+  --ink-mute: #6b7a73;     /* tertiary text — only for fine print */
   --line: #e6ebe8;
   --line-soft: #f0f3f1;
 
@@ -38,9 +38,9 @@
   --font-display: var(--font-display), ui-serif, Georgia, serif;
 }
 
-/* Fraunces variable axis tuning — softens letterforms for warmer headlines */
+/* Fraunces variable axis tuning — keep distinctive shape but readable */
 .font-display {
-  font-variation-settings: "opsz" 144, "SOFT" 60, "WONK" 1;
+  font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 0;
   letter-spacing: -0.02em;
 }
 

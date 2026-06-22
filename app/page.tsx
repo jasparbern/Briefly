@@ -545,38 +545,29 @@ function Pricing({ onSignIn, loading, signedIn }: { onSignIn: () => void; loadin
       <div className="relative max-w-3xl mx-auto text-center reveal">
         <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--green-300)] mb-4">Pricing</span>
         <h2 className="font-display text-5xl md:text-6xl text-balance">
-          Free while we&apos;re new.
+          Free to try.
           <br />
-          <em className="text-[var(--green-300)]">No card to start.</em>
+          <em className="text-[var(--green-300)]">$7/mo if you stay.</em>
         </h2>
         <p className="mt-5 text-white/70 max-w-md mx-auto">
-          Two minutes to set up. Your first digest arrives the day you pick. Cancel by clicking one button.
+          Free forever for one stream, weekly. Pro adds up to 5 streams, daily delivery, and digests sent to any inbox. 14-day Pro trial. No card to start.
         </p>
 
-        <div className="mt-9 grid sm:grid-cols-2 gap-3 max-w-md mx-auto text-left">
-          {[
-            'Unlimited senders during early access',
-            'As many streams as you have kids',
-            'Daily, weekly, or custom day delivery',
-            'See and delete what we read, anytime',
-          ].map((t) => (
-            <div key={t} className="flex items-start gap-2 text-sm text-white/85">
-              <span className="text-[var(--green-300)] mt-0.5" aria-hidden="true"><I.check/></span>
-              <span>{t}</span>
-            </div>
-          ))}
+        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={onSignIn}
+            disabled={loading}
+            className="btn btn-green text-base"
+          >
+            <GoogleG />
+            {loading ? 'Signing in…' : signedIn ? 'Go to dashboard' : 'Start free with Google'}
+          </button>
+          <a href="/pricing" className="btn btn-ghost text-base text-white hover:text-white border border-white/20 hover:border-white/40">
+            See plans
+          </a>
         </div>
-
-        <button
-          type="button"
-          onClick={onSignIn}
-          disabled={loading}
-          className="mt-9 btn btn-green text-base"
-        >
-          <GoogleG />
-          {loading ? 'Signing in…' : signedIn ? 'Go to dashboard' : 'Start free with Google'}
-        </button>
-        <p className="mt-3 text-xs text-white/50">No credit card. Cancel anytime in one click.</p>
+        <p className="mt-3 text-xs text-white/50">Cancel anytime in one click.</p>
       </div>
     </section>
   )

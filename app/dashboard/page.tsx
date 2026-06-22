@@ -33,6 +33,16 @@ type Suggestion = {
   reason: string
 }
 
+type TierInfo = {
+  tier: 'free' | 'pro'
+  limits: {
+    maxStreams: number
+    maxSendersPerStream: number
+    allowedCadences: ('daily' | 'weekly' | 'custom')[]
+    alternateDeliveryEmail: boolean
+  }
+}
+
 const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const DAYS_LONG = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
@@ -54,6 +64,7 @@ function DashboardInner() {
   const [streams, setStreams] = useState<Stream[]>([])
   const [expandedStreamId, setExpandedStreamId] = useState<string | null>(null)
   const [flash, setFlash] = useState<{ text: string; tone: 'good' | 'bad' } | null>(null)
+  const [tier, setTier] = useState<TierInfo | null>(null)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -73,6 +84,9 @@ function DashboardInner() {
     if (!user) return
     fetch('/api/gmail/status').then((r) => r.json()).then((d) => {
       if (d.connected) setGmailConnected(true)
+    })
+    fetch('/api/account/tier').then((r) => r.json()).then((d) => {
+      if (d?.tier) setTier(d)
     })
     void loadStreams()
   }, [user])
@@ -132,11 +146,16 @@ function DashboardInner() {
   async function createStream() {
     const name = window.prompt('Name this stream (e.g. School, Packages, Soccer league):')
     if (!name?.trim()) return
-    const created = await fetch('/api/streams', {
+    const res = await fetch('/api/streams', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: name.trim() }),
-    }).then((r) => r.json())
+    })
+    const created = await res.json()
+    if (!res.ok || created?.error) {
+      showFlash(created?.error ?? 'Could not create stream', 'bad')
+      return
+    }
     setStreams((prev) => [...prev, created])
     setExpandedStreamId(created.id)
   }
@@ -171,7 +190,11 @@ function DashboardInner() {
         </a>
         <div className="flex items-center gap-4 text-sm text-[var(--ink-soft)]">
           <span className="hidden sm:inline tnum">{user?.email}</span>
-          <a href="/pricing" className="hover:text-[var(--ink)] transition-colors">Pricing</a>
+          {tier?.tier === 'pro' ? (
+            <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--green-50)] text-[var(--green-700)] text-xs font-semibold uppercase tracking-wider">Pro</span>
+          ) : (
+            <a href="/pricing" className="text-[var(--green-700)] font-semibold hover:underline">Upgrade</a>
+          )}
           <button onClick={signOut} className="hover:text-[var(--ink)] transition-colors">Sign out</button>
         </div>
       </nav>
@@ -221,12 +244,22 @@ function DashboardInner() {
                 Each stream is its own subscription. Different senders, different cadence, different email.
               </p>
             </div>
-            <button
-              onClick={createStream}
-              className="text-sm bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap"
-            >
-              + New stream
-            </button>
+            {tier && streams.length >= tier.limits.maxStreams && tier.tier !== 'pro' ? (
+              <a
+                href="/pricing"
+                className="text-sm bg-[var(--green-600)] text-white px-4 py-2 rounded-lg hover:bg-[var(--green-700)] transition-colors whitespace-nowrap"
+                title={`Free plan is limited to ${tier.limits.maxStreams} stream${tier.limits.maxStreams === 1 ? '' : 's'}`}
+              >
+                Upgrade for more
+              </a>
+            ) : (
+              <button
+                onClick={createStream}
+                className="text-sm bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap"
+              >
+                + New stream
+              </button>
+            )}
           </div>
 
           <div className="space-y-4">
@@ -236,6 +269,7 @@ function DashboardInner() {
                 stream={stream}
                 expanded={expandedStreamId === stream.id}
                 onToggle={() => setExpandedStreamId((curr) => (curr === stream.id ? null : stream.id))}
+                tier={tier}
                 onPatch={(patch) => patchStream(stream.id, patch)}
                 onDelete={() => deleteStream(stream.id, stream.name)}
                 gmailConnected={gmailConnected}
@@ -281,7 +315,7 @@ function DashboardInner() {
 /* ---------- StreamCard ---------- */
 
 function StreamCard({
-  stream, expanded, onToggle, onPatch, onDelete, gmailConnected, userEmail, onFlash,
+  stream, expanded, onToggle, onPatch, onDelete, gmailConnected, userEmail, onFlash, tier,
 }: {
   stream: Stream
   expanded: boolean
@@ -291,7 +325,11 @@ function StreamCard({
   gmailConnected: boolean
   userEmail?: string
   onFlash: (text: string, tone?: 'good' | 'bad') => void
+  tier: TierInfo | null
 }) {
+  const allowedCadences = tier?.limits.allowedCadences ?? ['daily', 'weekly', 'custom']
+  const canUseAltDelivery = tier?.limits.alternateDeliveryEmail ?? true
+  const maxSenders = tier?.limits.maxSendersPerStream ?? 25
   const [senders, setSenders] = useState<Sender[]>([])
   const [loadingSenders, setLoadingSenders] = useState(false)
   const [editingName, setEditingName] = useState(false)
@@ -510,7 +548,15 @@ function StreamCard({
           {/* Senders */}
           {stream.filter_mode !== 'topic' && (
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-2">Senders</h3>
+            <div className="flex items-baseline justify-between mb-2">
+              <h3 className="text-sm font-semibold text-gray-900">Senders</h3>
+              <span className="text-xs text-gray-500 tnum">
+                {senders.length} / {maxSenders}
+                {senders.length >= maxSenders && tier?.tier !== 'pro' && (
+                  <> · <a href="/pricing" className="text-[var(--green-700)] underline font-semibold">Upgrade</a></>
+                )}
+              </span>
+            </div>
             <p className="text-xs text-gray-500 mb-3">Emails Briefly reads for this stream.</p>
 
             {loadingSenders && <p className="text-xs text-gray-500">Loading…</p>}
@@ -657,19 +703,32 @@ function StreamCard({
               <div>
                 <label className="block text-xs font-medium text-gray-700 mb-1">Frequency</label>
                 <div className="inline-flex rounded-md border border-gray-200 overflow-hidden text-xs">
-                  {(['daily', 'weekly', 'custom'] as const).map((c) => (
-                    <button
-                      key={c}
-                      onClick={() => onPatch({ cadence: c })}
-                      className={`px-3 py-1 transition-colors ${
-                        stream.cadence === c
-                          ? 'bg-gray-900 text-white'
-                          : 'bg-white text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {c[0].toUpperCase() + c.slice(1)}
-                    </button>
-                  ))}
+                  {(['daily', 'weekly', 'custom'] as const).map((c) => {
+                    const locked = !allowedCadences.includes(c)
+                    return (
+                      <button
+                        key={c}
+                        onClick={() => {
+                          if (locked) {
+                            onFlash(`${c[0].toUpperCase() + c.slice(1)} delivery is a Pro feature. Upgrade to unlock.`, 'bad')
+                            return
+                          }
+                          onPatch({ cadence: c })
+                        }}
+                        className={`px-3 py-1 transition-colors ${
+                          stream.cadence === c
+                            ? 'bg-gray-900 text-white'
+                            : locked
+                              ? 'bg-white text-gray-400 hover:bg-gray-50'
+                              : 'bg-white text-gray-700 hover:bg-gray-50'
+                        }`}
+                        title={locked ? 'Pro feature — upgrade to unlock' : undefined}
+                      >
+                        {c[0].toUpperCase() + c.slice(1)}
+                        {locked && <span className="ml-1 text-[10px] text-[var(--green-700)]">Pro</span>}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
@@ -724,15 +783,23 @@ function StreamCard({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Send this stream to</label>
+                <label className="block text-xs font-medium text-gray-700 mb-1">
+                  Send this stream to
+                  {!canUseAltDelivery && <span className="ml-2 text-[10px] text-[var(--green-700)] font-semibold uppercase tracking-wider">Pro</span>}
+                </label>
                 <input
                   type="email"
-                  placeholder={userEmail ?? 'your-other@email.com'}
+                  placeholder={canUseAltDelivery ? (userEmail ?? 'your-other@email.com') : 'Upgrade to send to a different inbox'}
                   value={stream.delivery_email ?? ''}
                   onChange={(e) => onPatch({ delivery_email: e.target.value || null })}
-                  className="text-xs border border-gray-200 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gray-900 w-full max-w-sm"
+                  disabled={!canUseAltDelivery}
+                  className="text-xs border border-gray-200 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gray-900 w-full max-w-sm disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
                 />
-                <p className="text-xs text-gray-500 mt-0.5">Leave blank to use your Gmail.</p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  {canUseAltDelivery
+                    ? 'Leave blank to use your Gmail.'
+                    : <>Free plan delivers to your Gmail. <a href="/pricing" className="text-[var(--green-700)] underline">Upgrade</a> to pick a different inbox.</>}
+                </p>
               </div>
 
               <label className="flex items-center gap-2 text-xs text-gray-700">

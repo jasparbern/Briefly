@@ -17,9 +17,25 @@ const fraunces = Fraunces({
   display: "swap",
 })
 
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://briefly-gamma-red.vercel.app'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(APP_URL),
   title: "Briefly — Your week of email, in one read",
   description: "Pick who matters. Skip the rest. One clean recap, on your schedule.",
+  openGraph: {
+    title: "Briefly — Your week of email, in one read",
+    description: "Pick who matters. Skip the rest. One clean recap, on your schedule.",
+    url: APP_URL,
+    siteName: "Briefly",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Briefly — Your week of email, in one read",
+    description: "Pick who matters. Skip the rest. One clean recap, on your schedule.",
+  },
+  robots: { index: true, follow: true },
 }
 
 export const viewport: Viewport = {

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,10 +8,12 @@ const inter = Inter({
   display: "swap",
 })
 
-const instrumentSerif = Instrument_Serif({
-  weight: "400",
+// Fraunces — variable optical-sizing serif. Distinctive opsz + SOFT axes
+// give Briefly a memorable hand-set magazine feel.
+const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-display",
+  axes: ["SOFT", "WONK", "opsz"],
   display: "swap",
 })
 
@@ -30,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" className={`${inter.variable} ${fraunces.variable}`}>
       <body className="bg-white text-[var(--ink)] antialiased font-sans">
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:shadow">
           Skip to main content

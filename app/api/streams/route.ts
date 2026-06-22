@@ -37,7 +37,6 @@ export async function POST(request: Request) {
 
   const name = (body.name ?? '').trim() || 'New stream'
 
-  // Enforce per-tier stream count limit.
   const limits = await getUserLimits(user.id)
   const { count: existing } = await supabase
     .from('streams')
@@ -45,7 +44,23 @@ export async function POST(request: Request) {
     .eq('user_id', user.id)
   if ((existing ?? 0) >= limits.maxStreams) {
     return NextResponse.json(
-      { error: `Free plan is limited to ${limits.maxStreams} stream. Upgrade to add more.` },
+      { error: `Your plan is limited to ${limits.maxStreams} stream${limits.maxStreams === 1 ? '' : 's'}. Upgrade to add more.`, upgradeRequired: true },
+      { status: 402 }
+    )
+  }
+
+  const requestedCadence = body.cadence ?? 'weekly'
+  if (!limits.allowedCadences.includes(requestedCadence)) {
+    return NextResponse.json(
+      { error: `Your plan only supports ${limits.allowedCadences.join(', ')} delivery. Upgrade for daily and custom schedules.`, upgradeRequired: true },
+      { status: 402 }
+    )
+  }
+
+  const wantsAltDelivery = !!body.delivery_email?.trim()
+  if (wantsAltDelivery && !limits.alternateDeliveryEmail) {
+    return NextResponse.json(
+      { error: 'Alternate delivery email is a Pro feature. Upgrade to send digests to a different inbox.', upgradeRequired: true },
       { status: 402 }
     )
   }
@@ -56,10 +71,10 @@ export async function POST(request: Request) {
       user_id: user.id,
       name,
       filter_mode: 'senders',
-      cadence: body.cadence ?? 'weekly',
+      cadence: requestedCadence,
       day_of_week: body.day_of_week ?? 0,
       hour_utc: body.hour_utc ?? 9,
-      custom_days: body.cadence === 'custom' ? (body.custom_days ?? []) : null,
+      custom_days: requestedCadence === 'custom' ? (body.custom_days ?? []) : null,
       lookback_days: body.lookback_days ?? 7,
       delivery_email: body.delivery_email?.trim() || null,
     })

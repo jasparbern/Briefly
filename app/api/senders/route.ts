@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { getUserLimits } from '@/lib/stripe'
 
 // GET /api/senders?streamId=<uuid>  — list senders for one stream
 // GET /api/senders                  — list ALL senders for current user (back-compat)
@@ -47,6 +48,30 @@ export async function POST(request: Request) {
     .eq('user_id', user.id)
     .maybeSingle()
   if (!streamRow) return NextResponse.json({ error: 'stream not found' }, { status: 404 })
+
+  // Enforce per-tier senders-per-stream cap. Skip the gate if the address is
+  // already attached to this stream — upsert below is an in-place edit.
+  const limits = await getUserLimits(user.id)
+  const { count: existingCount } = await supabase
+    .from('senders')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('stream_id', body.stream_id)
+  const { data: existingSender } = await supabase
+    .from('senders')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('email', body.email)
+    .maybeSingle()
+  if (!existingSender && (existingCount ?? 0) >= limits.maxSendersPerStream) {
+    return NextResponse.json(
+      {
+        error: `Your plan is limited to ${limits.maxSendersPerStream} senders per stream. Upgrade to add more.`,
+        upgradeRequired: true,
+      },
+      { status: 402 }
+    )
+  }
 
   const { data, error } = await supabase
     .from('senders')

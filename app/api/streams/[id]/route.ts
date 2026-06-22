@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { getUserLimits } from '@/lib/stripe'
 
 type Ctx = { params: Promise<{ id: string }> }
 
@@ -38,6 +39,20 @@ export async function PATCH(request: Request, ctx: Ctx) {
   }
   if (patch.cadence && patch.cadence !== 'custom') {
     patch.custom_days = null
+  }
+
+  const limits = await getUserLimits(user.id)
+  if (patch.cadence && !limits.allowedCadences.includes(patch.cadence as 'daily' | 'weekly' | 'custom')) {
+    return NextResponse.json(
+      { error: `Your plan only supports ${limits.allowedCadences.join(', ')} delivery. Upgrade for daily and custom schedules.`, upgradeRequired: true },
+      { status: 402 }
+    )
+  }
+  if (patch.delivery_email && !limits.alternateDeliveryEmail) {
+    return NextResponse.json(
+      { error: 'Alternate delivery email is a Pro feature. Upgrade to send digests to a different inbox.', upgradeRequired: true },
+      { status: 402 }
+    )
   }
 
   const { data, error } = await supabase

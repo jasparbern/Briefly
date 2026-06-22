@@ -90,7 +90,10 @@ Tone examples (bad — do not write like this):
 * You should definitely check this — it's really important!`
 
   const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    // Haiku 4.5 is plenty for this structured bucketing task at ~3x lower
+    // cost than Sonnet. We already use Haiku for topic filtering below.
+    // To upgrade quality for paid tiers, set ANTHROPIC_MODEL_DIGEST in env.
+    model: process.env.ANTHROPIC_MODEL_DIGEST ?? 'claude-haiku-4-5',
     max_tokens: 1024,
     messages: [{ role: 'user', content: prompt }],
   })

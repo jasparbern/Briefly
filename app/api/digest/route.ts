@@ -5,6 +5,11 @@ import { sendDigestEmail } from '@/lib/email'
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
+// 60-second budget for first runs with large inboxes (max on Vercel Hobby).
+export const maxDuration = 60
+// Pin near Anthropic for lower latency + fewer cold starts.
+export const preferredRegion = 'iad1'
+
 function getServiceClient() {
   return createServiceClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

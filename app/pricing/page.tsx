@@ -101,7 +101,7 @@ export default function PricingPage() {
                 </span>
               </div>
               <div className="mt-5 flex items-baseline gap-1">
-                <span className="font-display text-5xl tnum">$5</span>
+                <span className="font-display text-5xl tnum">$7</span>
                 <span className="text-white/60 text-sm">/month</span>
               </div>
               <ul className="mt-6 space-y-2.5 text-sm flex-1">

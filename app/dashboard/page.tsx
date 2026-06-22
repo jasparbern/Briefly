@@ -168,6 +168,7 @@ function DashboardInner() {
         </a>
         <div className="flex items-center gap-4 text-sm text-[var(--ink-soft)]">
           <span className="hidden sm:inline tnum">{user?.email}</span>
+          <a href="/pricing" className="hover:text-[var(--ink)] transition-colors">Pricing</a>
           <button onClick={signOut} className="hover:text-[var(--ink)] transition-colors">Sign out</button>
         </div>
       </nav>

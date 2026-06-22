@@ -128,7 +128,7 @@ function NavBar({ onSignIn, loading }: { onSignIn: () => void; loading: boolean 
         <div className="flex items-center gap-1 text-sm">
           <a href="#sample" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Sample</a>
           <a href="#how" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">How it works</a>
-          <a href="#pricing" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Pricing</a>
+          <a href="/pricing" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Pricing</a>
           <a href="#faq" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">FAQ</a>
           <button
             type="button"
@@ -594,6 +594,7 @@ function Footer() {
         </div>
         <div className="flex items-center gap-5">
           <a href="#how" className="hover:text-[var(--ink)] transition-colors">How it works</a>
+          <a href="/pricing" className="hover:text-[var(--ink)] transition-colors">Pricing</a>
           <a href="#faq" className="hover:text-[var(--ink)] transition-colors">FAQ</a>
           <a href="/privacy" className="hover:text-[var(--ink)] transition-colors">Privacy</a>
           <a href="/terms" className="hover:text-[var(--ink)] transition-colors">Terms</a>

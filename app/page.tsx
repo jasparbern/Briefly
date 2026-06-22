@@ -164,7 +164,7 @@ function Hero({ onSignIn, loading }: { onSignIn: () => void; loading: boolean })
             <em className="text-[var(--green-700)]">summed up</em> for you.
           </h1>
           <p className="mt-6 text-lg text-[var(--ink)] max-w-md text-pretty">
-            Pick the senders that matter. Get one short recap each week with the dates, dollars, and forms you can&apos;t miss.
+            We read the emails you select and turn them into one simple digest delivered on your schedule.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">

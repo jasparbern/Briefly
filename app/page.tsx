@@ -67,7 +67,7 @@ export default function Home() {
       <Hero onSignIn={signInWithGoogle} loading={loading} />
       <BeforeAfter />
       <Sample />
-      <PerKid />
+      <Streams />
       <How />
       <Faq />
       <Pricing onSignIn={signInWithGoogle} loading={loading} />
@@ -156,15 +156,15 @@ function Hero({ onSignIn, loading }: { onSignIn: () => void; loading: boolean })
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-12 gap-10 items-center">
         <div className="md:col-span-7">
           <p className="text-sm text-[var(--green-700)] font-medium mb-4">
-            For parents drowning in school emails.
+            School. Work. Packages. Hobbies. Anything in your inbox.
           </p>
           <h1 className="font-display text-[clamp(2.75rem,7vw,5.25rem)] leading-[0.95] tracking-tight text-balance">
-            Every school email,
+            Your week of email,
             <br />
-            <em className="text-[var(--green-700)]">one read</em> a week.
+            <em className="text-[var(--green-700)]">summed up</em> for you.
           </h1>
           <p className="mt-6 text-lg text-[var(--ink-soft)] max-w-md text-pretty">
-            PTA, principal, coach, school nurse. We read them. You read one short recap with the dates, the dollars, and the forms due.
+            Pick a few senders. We read them. You read one short recap with the dates, the dollars, and the stuff you actually need to do.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -286,7 +286,7 @@ function BeforeAfter() {
             <em className="text-[var(--green-700)]">One</em> worth reading.
           </h2>
           <p className="mt-5 text-[var(--ink-soft)] text-pretty">
-            We sift the PTA noise, the cafeteria menus, the reply-all chains. What&apos;s left is what you actually need.
+            The example below is one parent&apos;s school inbox. Briefly works the same way for work updates, newsletters, package alerts, or anything you point it at.
           </p>
         </div>
 
@@ -394,39 +394,37 @@ function FullDigest() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
- * Per-kid streams
+ * Streams — one digest per context (school, work, packages, anything)
  * ─────────────────────────────────────────────────────────────────────── */
-function PerKid() {
+function Streams() {
   return (
     <section className="py-16 px-6 bg-white">
       <div className="max-w-5xl mx-auto">
         <div className="reveal max-w-2xl">
           <h2 className="font-display text-4xl md:text-5xl leading-[1.05] text-balance">
-            One inbox. <em className="text-[var(--green-700)]">One digest per kid.</em>
+            One inbox. <em className="text-[var(--green-700)]">A digest for each thing.</em>
           </h2>
           <p className="mt-4 text-[var(--ink-soft)] text-pretty">
-            Maya&apos;s elementary on Sundays. Ethan&apos;s middle school on Mondays. Soccer league on Fridays. Each one separate.
+            Different rhythms for different stuff. School news on Sundays. Work updates daily. Package alerts in the morning. Each one its own recap, on its own schedule.
           </p>
         </div>
 
-        <div className="mt-8 grid sm:grid-cols-3 gap-4">
-          <KidCard name="Maya" subline="3rd grade · Lincoln" cadence="Sun" senders={['Mrs. Carter', 'Lincoln PTA', 'Nurse']} />
-          <KidCard name="Ethan" subline="7th grade · Roosevelt" cadence="Mon" senders={['Counselor', 'Track coach', 'Roosevelt admin']} />
-          <KidCard name="Soccer" subline="Both kids · weekend" cadence="Fri" senders={['Coach Mike', 'TeamSnap', 'League']} />
+        <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <StreamCard name="School" cadence="Weekly · Sun" senders={['Lincoln PTA', 'Principal', 'Coach Mike']} />
+          <StreamCard name="Work" cadence="Daily" senders={['Slack digest', 'Calendar', 'Notion updates']} />
+          <StreamCard name="Packages" cadence="Daily" senders={['Amazon', 'UPS', 'USPS', 'FedEx']} />
+          <StreamCard name="Hobbies" cadence="Sat" senders={['Climbing gym', 'Cooking newsletter', 'NYT Games']} />
         </div>
       </div>
     </section>
   )
 }
 
-function KidCard({ name, subline, cadence, senders }: { name: string; subline: string; cadence: string; senders: string[] }) {
+function StreamCard({ name, cadence, senders }: { name: string; cadence: string; senders: string[] }) {
   return (
     <div className="bg-white rounded-2xl border border-[var(--line)] p-5 hover:border-[var(--green-300)] hover:-translate-y-1 transition-all duration-300 shadow-sm hover:shadow-md reveal">
       <div className="flex items-center justify-between">
-        <div>
-          <h3 className="font-semibold">{name}</h3>
-          <p className="text-xs text-[var(--ink-mute)] mt-0.5">{subline}</p>
-        </div>
+        <h3 className="font-semibold">{name}</h3>
         <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-[var(--green-50)] text-[var(--green-700)] text-[10px] font-semibold uppercase tracking-wide">
           <span className="w-1.5 h-1.5 rounded-full bg-[var(--green-500)]" aria-hidden="true" />
           {cadence}
@@ -452,7 +450,7 @@ function KidCard({ name, subline, cadence, senders }: { name: string; subline: s
 function How() {
   const steps = [
     { icon: <I.shield/>, title: 'Sign in with Google', body: 'Read-only access. We can\'t send, edit, or delete a thing.' },
-    { icon: <I.mail/>,   title: 'Pick your school senders', body: 'Paste a few addresses, or type "school stuff" and let us find them.' },
+    { icon: <I.mail/>,   title: 'Pick what to watch', body: 'Paste a few senders, or describe what you want and we find them.' },
     { icon: <I.cal/>,    title: 'Choose your day', body: 'Daily, weekly, or specific days. One email lands when you want it.' },
   ]
   return (
@@ -492,12 +490,12 @@ function Faq() {
       a: 'We use a conservative bias. Anything that looks like a deadline, dollar amount, signed form, or schedule change lands in Action Required or Important. Reply-all noise gets grouped, not deleted.',
     },
     {
-      q: 'Can both parents get the same digest?',
-      a: 'Yes. Set a "delivery to" email for any stream. One person reads Gmail. Both people read the digest.',
+      q: 'Can someone else get the same digest?',
+      a: 'Yes. Set a "delivery to" email on any stream. One person owns the Gmail. Anyone you choose gets the digest.',
     },
     {
-      q: 'I have kids at three different schools. Does it handle that?',
-      a: 'Yes. Each kid gets their own stream with its own senders and cadence. Maya on Sundays, Ethan on Mondays.',
+      q: 'Can I have different cadences for different things?',
+      a: 'Yes. Each stream has its own schedule. Work daily, school on Sundays, packages whenever. They never mix.',
     },
     {
       q: 'What does Briefly do with my email?',
@@ -517,7 +515,7 @@ function Faq() {
       <div className="max-w-3xl mx-auto">
         <div className="reveal mb-8">
           <h2 className="font-display text-4xl md:text-5xl text-balance">
-            Questions parents ask.
+            Questions people ask.
           </h2>
         </div>
         <div className="space-y-3">

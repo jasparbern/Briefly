@@ -1,22 +1,21 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 export default function PricingPage() {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [needsSignIn, setNeedsSignIn] = useState(false)
 
   async function startCheckout() {
     setLoading(true)
     setError(null)
+    setNeedsSignIn(false)
     try {
       const res = await fetch('/api/stripe/checkout', { method: 'POST' })
       if (!res.ok) {
-        // Not signed in? Bounce to home for sign-in.
         if (res.status === 401) {
-          router.push('/?signin=1')
+          setNeedsSignIn(true)
           return
         }
         const data = await res.json().catch(() => ({}))
@@ -53,6 +52,14 @@ export default function PricingPage() {
         </div>
       </section>
 
+      {needsSignIn && (
+        <div className="max-w-md mx-auto mt-2 mb-4 px-6">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 text-amber-900 px-4 py-3 text-sm flex items-center justify-between gap-3">
+            <span>Sign in first to start your trial.</span>
+            <a href="/" className="font-semibold underline whitespace-nowrap">Sign in</a>
+          </div>
+        </div>
+      )}
       {error && (
         <div className="max-w-md mx-auto mt-2 mb-4 px-6">
           <div className="rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">{error}</div>

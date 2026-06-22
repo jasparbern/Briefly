@@ -23,8 +23,11 @@ export default function Home() {
   }, [])
 
   async function handleCta() {
+    // Pass through ?next=/foo so the user lands back where they started after auth.
+    const next = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('next') : null
+    const dest = next && next.startsWith('/') ? next : '/dashboard'
     if (signedIn) {
-      router.push('/dashboard')
+      router.push(dest)
       return
     }
     if (previewMode) {
@@ -37,7 +40,7 @@ export default function Home() {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(dest)}`,
         scopes: 'email profile',
       },
     })

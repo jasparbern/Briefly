@@ -62,7 +62,7 @@ export default function PricingPage() {
         <div className="max-w-md mx-auto mt-2 mb-4 px-6">
           <div className="rounded-xl border border-amber-200 bg-amber-50 text-amber-900 px-4 py-3 text-sm flex items-center justify-between gap-3">
             <span>Sign in first to start your trial.</span>
-            <a href="/" className="font-semibold underline whitespace-nowrap">Sign in</a>
+            <a href="/?next=%2Fpricing" className="font-semibold underline whitespace-nowrap">Sign in</a>
           </div>
         </div>
       )}

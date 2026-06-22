@@ -203,10 +203,12 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
 
         <div className="md:col-span-5 relative">
           <PeekingDigest />
-          {/* Small sticky note — the joke, not the room */}
-          <div className="sticky-note absolute -bottom-10 -left-6 md:-left-12 rotate-[-4deg] w-44 p-3 rounded-md font-display italic text-sm leading-snug select-none">
-            &ldquo;i ain&apos;t reading allat.&rdquo;
-            <span className="block not-italic text-[11px] font-sans mt-1 text-[#7a5d24]">cool. we got it.</span>
+          {/* Small sticky note — three thoughts the reader's already had */}
+          <div className="sticky-note absolute -bottom-14 -left-6 md:-left-12 rotate-[-4deg] w-52 p-3 rounded-md font-display italic text-[13px] leading-snug select-none">
+            <span className="block">&ldquo;who has time for this&rdquo;</span>
+            <span className="block mt-1">&ldquo;i&apos;m never gonna finish these emails&rdquo;</span>
+            <span className="block mt-1">&ldquo;i ain&apos;t reading allat&rdquo;</span>
+            <span className="block not-italic text-[11px] font-sans mt-2 text-[#7a5d24]">cool. we got it.</span>
           </div>
         </div>
       </div>
@@ -234,16 +236,16 @@ function PeekingDigest() {
           <span className="w-2.5 h-2.5 rounded-full bg-[#fb7185]" />
           <span className="w-2.5 h-2.5 rounded-full bg-[#fbbf24]" />
           <span className="w-2.5 h-2.5 rounded-full bg-[var(--green-400)]" />
-          <span className="ml-3 truncate">Lincoln Elementary · 2 forms due Thursday</span>
+          <span className="ml-3 truncate">Work this week · 2 sign-offs, 1 reschedule</span>
         </div>
         <div className="p-5 space-y-3 text-left">
           <BucketRow color="bucket-red" emoji="🔴" title="Action Required" items={[
-            <>Permission slip for Thursday field trip. <strong>$14</strong>.</>,
-            <>Return signed <strong>COVID waiver</strong> by Wed.</>,
+            <>Sign off on the launch doc by <strong>Thu 5pm</strong>.</>,
+            <>Invoice from Acme due. <strong>$1,200</strong>.</>,
           ]}/>
           <BucketRow color="bucket-amber" emoji="🟡" title="Important" items={[
-            <>Picture day moved to <strong>Fri the 28th</strong>.</>,
-            <>PTA meeting Tue <strong>7 pm</strong>, gym entrance.</>,
+            <>1:1 with Maya moved to <strong>Wed 3pm</strong>.</>,
+            <>Q3 OKR draft is live. Comments by Fri.</>,
           ]}/>
         </div>
       </article>
@@ -341,7 +343,7 @@ function BeforeAfter() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
- * Sample — a full digest, school flavor
+ * Sample — a full digest, subscriptions flavor
  * ─────────────────────────────────────────────────────────────────────── */
 function Sample() {
   return (
@@ -356,10 +358,10 @@ function Sample() {
           </p>
           <ul className="mt-6 space-y-2.5 text-sm">
             {[
-              ['🔴', 'Forms, payments, deadlines this week'],
-              ['🟡', 'Schedule moves, confirmations, key updates'],
-              ['🟢', 'Optional — events, signups, opportunities'],
-              ['⚪', 'Reply-all chains and noise, tucked away'],
+              ['🔴', 'Renewals, payments, things you have to do'],
+              ['🟡', 'Updates worth knowing, no action needed'],
+              ['🟢', 'Optional — deals, drops, signups'],
+              ['⚪', 'Promo blasts and noise, grouped'],
             ].map(([e, t]) => (
               <li key={t} className="flex items-start gap-3">
                 <span aria-hidden="true" className="text-base leading-6">{e}</span>
@@ -384,25 +386,25 @@ function FullDigest() {
         <span className="uppercase tracking-widest">Sun · 9:00 am</span>
         <span>Briefly</span>
       </div>
-      <h3 className="font-display text-2xl mt-3 leading-tight">📬 Lincoln Elementary — 2 forms due Thursday</h3>
-      <p className="text-[var(--ink-mute)] text-xs mt-1">Quiet week. Two forms, one schedule change, one bus reroute.</p>
+      <h3 className="font-display text-2xl mt-3 leading-tight">📬 Your week of subscriptions — 1 renewal, 3 reads</h3>
+      <p className="text-[var(--ink-mute)] text-xs mt-1">28 emails scanned. Here&apos;s what was worth your time.</p>
 
       <div className="mt-5 space-y-5">
         <BucketRow color="bucket-red" emoji="🔴" title="Action Required" items={[
-          <>Sign and return field trip slip for <strong>Thu Mar 21</strong>. Include <strong>$14</strong>.</>,
-          <>Submit annual <strong>COVID waiver</strong> by Wed.</>,
+          <>Spotify auto-renews <strong>Thu</strong>. <strong>$16.99</strong>. Cancel here.</>,
+          <>Update payment for Notion. Card on file expires <strong>Mar 31</strong>.</>,
         ]}/>
         <BucketRow color="bucket-amber" emoji="🟡" title="Important" items={[
-          <>Picture day moved to <strong>Fri Mar 28</strong>.</>,
-          <>PTA meeting <strong>Tue 7 pm</strong>, enter through the gym.</>,
-          <>Bus 217 route adjustment starts <strong>Mon</strong>.</>,
+          <>Lenny&apos;s Newsletter: new post on growth loops.</>,
+          <>NYT: 3 long reads saved to your feed.</>,
+          <>Substack inbox digest now arrives <strong>Fri</strong>.</>,
         ]}/>
         <BucketRow color="bucket-good" emoji="🟢" title="Opportunity" items={[
-          <>Spring soccer signups now open. <strong>Closes Apr 4</strong>.</>,
+          <>Apple TV+ free month if you resub by <strong>Apr 4</strong>.</>,
         ]}/>
         <BucketRow color="bucket-mute" emoji="⚪" title="Safe to Ignore" items={[
-          <>12 reply-all &ldquo;thank you&rdquo; chains, grouped.</>,
-          <>4 cafeteria menu emails, identical.</>,
+          <>12 promo blasts grouped (sale, sale, last chance).</>,
+          <>8 &ldquo;new login&rdquo; notices, all you.</>,
         ]}/>
       </div>
     </article>

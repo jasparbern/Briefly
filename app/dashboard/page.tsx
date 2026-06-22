@@ -155,14 +155,20 @@ function DashboardInner() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-        <a href="/" className="text-lg font-bold text-gray-900 hover:opacity-80 transition-opacity">
-          📬 Briefly
+    <div className="min-h-screen bg-[var(--bg-soft)]">
+      <nav className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b border-[var(--line-soft)] px-6 py-3 flex items-center justify-between">
+        <a href="/" className="flex items-center gap-2 font-semibold text-[15px] tracking-tight">
+          <span className="relative inline-flex items-center justify-center w-7 h-7 rounded-md bg-[var(--green-600)]" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 8l8 5 8-5" />
+              <rect x="3" y="6" width="18" height="13" rx="2" />
+            </svg>
+          </span>
+          Briefly
         </a>
-        <div className="flex items-center gap-4 text-sm text-gray-600">
-          <span>{user?.email}</span>
-          <button onClick={signOut} className="hover:text-gray-900 transition-colors">Sign out</button>
+        <div className="flex items-center gap-4 text-sm text-[var(--ink-soft)]">
+          <span className="hidden sm:inline tnum">{user?.email}</span>
+          <button onClick={signOut} className="hover:text-[var(--ink)] transition-colors">Sign out</button>
         </div>
       </nav>
 
@@ -444,7 +450,7 @@ function StreamCard({
         <button
           onClick={sendNow}
           disabled={sending || !gmailConnected}
-          className="text-xs bg-amber-500 text-white font-medium px-3 py-1.5 rounded-lg hover:bg-amber-400 transition-colors disabled:opacity-50 whitespace-nowrap"
+          className="text-xs bg-[var(--green-600)] text-white font-medium px-3 py-1.5 rounded-lg hover:bg-[var(--green-700)] transition-colors disabled:opacity-50 whitespace-nowrap"
         >
           {sending ? (sendStatus || '…') : 'Send now'}
         </button>

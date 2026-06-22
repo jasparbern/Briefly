@@ -1,13 +1,28 @@
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const instrumentSerif = Instrument_Serif({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
-  title: "Briefly — Your weekly email digest",
-  description: "Cut through inbox noise. Get one clean digest every week.",
-};
+  title: "Briefly — Your week of email, in one read",
+  description: "Pick who matters. Skip the rest. One clean recap, on your schedule.",
+}
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
+}
 
 export default function RootLayout({
   children,
@@ -15,8 +30,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${geist.className} bg-white text-gray-900 antialiased`}>
+    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+      <body className="bg-white text-[var(--ink)] antialiased font-sans">
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:shadow">
+          Skip to main content
+        </a>
         {children}
       </body>
     </html>

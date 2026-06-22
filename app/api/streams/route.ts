@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { getUserLimits } from '@/lib/stripe'
 
 // GET /api/streams — list current user's streams
 export async function GET() {
@@ -35,6 +36,19 @@ export async function POST(request: Request) {
   }
 
   const name = (body.name ?? '').trim() || 'New stream'
+
+  // Enforce per-tier stream count limit.
+  const limits = await getUserLimits(user.id)
+  const { count: existing } = await supabase
+    .from('streams')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+  if ((existing ?? 0) >= limits.maxStreams) {
+    return NextResponse.json(
+      { error: `Free plan is limited to ${limits.maxStreams} stream. Upgrade to add more.` },
+      { status: 402 }
+    )
+  }
 
   const { data, error } = await supabase
     .from('streams')

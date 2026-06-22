@@ -14,7 +14,7 @@ export default function PrivacyPage() {
 
       <article className="max-w-2xl mx-auto px-6 py-12 prose prose-sm prose-gray">
         <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>
-        <p className="text-sm text-gray-500 mb-8">Last updated: June 21, 2026</p>
+        <p className="text-sm text-gray-500 mb-8">Last updated: June 22, 2026</p>
 
         <p>
           Briefly reads emails from senders you choose and sends you a recap. This page explains
@@ -29,6 +29,7 @@ export default function PrivacyPage() {
           <li>Your schedule choices (cadence, day, lookback window, delivery email).</li>
           <li>The actual emails Briefly processed for each digest (sender, subject, snippet, received date). You can delete any one of these from your dashboard.</li>
           <li>The digests we generated and sent you.</li>
+          <li>If you subscribe to Pro: your Stripe customer ID, subscription status, and trial/renewal dates. Briefly never sees your card number — Stripe handles all payment data.</li>
         </ul>
 
         <h2 className="text-xl font-semibold mt-10 mb-3">What we do with it</h2>
@@ -52,6 +53,7 @@ export default function PrivacyPage() {
           <li><strong>Anthropic</strong> — generates the digest from your emails. They do not store the inputs after returning a response, and do not train on them.</li>
           <li><strong>Resend</strong> — delivers the digest to your inbox.</li>
           <li><strong>Vercel</strong> — hosts the web app and runs the scheduled job that creates digests.</li>
+          <li><strong>Stripe</strong> — processes Pro subscriptions. Holds your billing details directly. Briefly only stores Stripe customer/subscription IDs and status.</li>
         </ul>
 
         <h2 className="text-xl font-semibold mt-10 mb-3">Gmail access scope</h2>

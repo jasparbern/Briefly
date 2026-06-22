@@ -10,6 +10,7 @@ const previewMode =
 export default function Home() {
   const [loading, setLoading] = useState(false)
   const [signedIn, setSignedIn] = useState(false)
+  const [authError, setAuthError] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -20,6 +21,10 @@ export default function Home() {
         if (user) setSignedIn(true)
       })
     })
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('error') === 'auth') setAuthError(true)
+    }
   }, [])
 
   async function handleCta() {
@@ -68,6 +73,13 @@ export default function Home() {
   return (
     <main id="main" className="overflow-x-hidden">
       <NavBar onSignIn={handleCta} loading={loading} signedIn={signedIn} />
+      {authError && (
+        <div className="max-w-md mx-auto mt-4 px-6">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 text-amber-900 px-4 py-3 text-sm">
+            Sign-in didn&apos;t complete. Try again, or email <a href="mailto:jasparbbernstein@gmail.com" className="underline">jasparbbernstein@gmail.com</a> if it keeps happening.
+          </div>
+        </div>
+      )}
       <Hero onSignIn={handleCta} loading={loading} signedIn={signedIn} />
       <BeforeAfter />
       <Sample />

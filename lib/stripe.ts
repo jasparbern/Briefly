@@ -24,8 +24,10 @@ export const LIMITS: Record<Tier, TierLimits> = {
     alternateDeliveryEmail: false,
   },
   pro: {
-    maxStreams: 50,
-    maxSendersPerStream: 100,
+    // 5-stream cap keeps margins positive on heavy users while still
+    // covering >95% of real use cases (a couple of kids + work + packages).
+    maxStreams: 5,
+    maxSendersPerStream: 25,
     allowedCadences: ['daily', 'weekly', 'custom'],
     alternateDeliveryEmail: true,
   },

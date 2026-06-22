@@ -105,8 +105,8 @@ export default function PricingPage() {
                 <span className="text-white/60 text-sm">/month</span>
               </div>
               <ul className="mt-6 space-y-2.5 text-sm flex-1">
-                <Tick dark>Unlimited streams</Tick>
-                <Tick dark>Unlimited senders</Tick>
+                <Tick dark>Up to 5 streams</Tick>
+                <Tick dark>25 senders per stream</Tick>
                 <Tick dark>Daily, weekly, custom days</Tick>
                 <Tick dark>Send digests to any email</Tick>
                 <Tick dark>AI topic-mode filtering</Tick>

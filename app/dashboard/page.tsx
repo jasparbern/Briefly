@@ -124,6 +124,13 @@ function DashboardInner() {
     window.location.href = '/api/account/export'
   }
 
+  async function openBillingPortal() {
+    const res = await fetch('/api/stripe/portal', { method: 'POST' })
+    const data = await res.json().catch(() => ({}))
+    if (data.url) window.location.href = data.url
+    else showFlash(data.error ?? 'Could not open billing portal', 'bad')
+  }
+
   async function deleteAccount() {
     const ok = window.confirm(
       'Delete your account and erase every stream, sender, schedule, and digest? This cannot be undone.'
@@ -287,6 +294,14 @@ function DashboardInner() {
             Download a copy of everything Briefly has on you, or delete your account.
           </p>
           <div className="flex flex-wrap gap-3">
+            {tier?.tier === 'pro' && (
+              <button
+                onClick={openBillingPortal}
+                className="text-sm bg-[var(--green-600)] text-white px-4 py-2 rounded-lg hover:bg-[var(--green-700)] transition-colors"
+              >
+                Manage subscription
+              </button>
+            )}
             <button
               onClick={exportData}
               className="text-sm border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors"

@@ -64,6 +64,9 @@ function DashboardInner() {
 
   useEffect(() => {
     if (params.get('gmail') === 'connected') setGmailConnected(true)
+    if (params.get('upgrade') === 'success') {
+      setFlash({ text: "Welcome to Pro. Your 14-day trial is on the house.", tone: 'good' })
+    }
   }, [params])
 
   useEffect(() => {

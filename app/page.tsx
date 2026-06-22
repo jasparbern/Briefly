@@ -9,7 +9,7 @@ const previewMode =
 
 export default function Home() {
   const [loading, setLoading] = useState(false)
-  const [checking, setChecking] = useState(!previewMode)
+  const [signedIn, setSignedIn] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -17,13 +17,16 @@ export default function Home() {
     import('@/lib/supabase/client').then(({ createClient }) => {
       const supabase = createClient()
       supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user) router.replace('/dashboard')
-        else setChecking(false)
+        if (user) setSignedIn(true)
       })
     })
-  }, [router])
+  }, [])
 
-  async function signInWithGoogle() {
+  async function handleCta() {
+    if (signedIn) {
+      router.push('/dashboard')
+      return
+    }
     if (previewMode) {
       window.alert('Preview mode. Add Supabase keys in .env.local to enable sign-in.')
       return
@@ -57,20 +60,18 @@ export default function Home() {
     )
     els.forEach((el) => io.observe(el))
     return () => io.disconnect()
-  }, [checking])
-
-  if (checking) return null
+  }, [])
 
   return (
     <main id="main" className="overflow-x-hidden">
-      <NavBar onSignIn={signInWithGoogle} loading={loading} />
-      <Hero onSignIn={signInWithGoogle} loading={loading} />
+      <NavBar onSignIn={handleCta} loading={loading} signedIn={signedIn} />
+      <Hero onSignIn={handleCta} loading={loading} signedIn={signedIn} />
       <BeforeAfter />
       <Sample />
       <Streams />
       <How />
       <Faq />
-      <Pricing onSignIn={signInWithGoogle} loading={loading} />
+      <Pricing onSignIn={handleCta} loading={loading} signedIn={signedIn} />
       <Footer />
     </main>
   )
@@ -120,7 +121,7 @@ const I = {
 /* ─────────────────────────────────────────────────────────────────────────
  * Nav
  * ─────────────────────────────────────────────────────────────────────── */
-function NavBar({ onSignIn, loading }: { onSignIn: () => void; loading: boolean }) {
+function NavBar({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: boolean; signedIn: boolean }) {
   return (
     <header className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b border-[var(--line-soft)]">
       <nav className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -136,7 +137,7 @@ function NavBar({ onSignIn, loading }: { onSignIn: () => void; loading: boolean 
             disabled={loading}
             className="btn btn-green text-sm py-2 px-4 ml-2"
           >
-            {loading ? 'Signing in…' : 'Sign in'}
+            {loading ? 'Signing in…' : signedIn ? 'Dashboard' : 'Sign in'}
           </button>
         </div>
       </nav>
@@ -147,7 +148,7 @@ function NavBar({ onSignIn, loading }: { onSignIn: () => void; loading: boolean 
 /* ─────────────────────────────────────────────────────────────────────────
  * Hero — parent-focused
  * ─────────────────────────────────────────────────────────────────────── */
-function Hero({ onSignIn, loading }: { onSignIn: () => void; loading: boolean }) {
+function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: boolean; signedIn: boolean }) {
   return (
     <section className="relative pt-16 pb-20 px-6 overflow-hidden">
       <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-b from-white via-[var(--green-50)] to-white" />
@@ -175,7 +176,7 @@ function Hero({ onSignIn, loading }: { onSignIn: () => void; loading: boolean })
               className="btn btn-primary text-base"
             >
               <GoogleG />
-              {loading ? 'Signing in…' : 'Start free'}
+              {loading ? 'Signing in…' : signedIn ? 'Go to dashboard' : 'Start free'}
             </button>
             <a href="#sample" className="btn btn-ghost text-base">See a real digest</a>
           </div>
@@ -537,7 +538,7 @@ function Faq() {
 /* ─────────────────────────────────────────────────────────────────────────
  * Pricing + CTA
  * ─────────────────────────────────────────────────────────────────────── */
-function Pricing({ onSignIn, loading }: { onSignIn: () => void; loading: boolean }) {
+function Pricing({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: boolean; signedIn: boolean }) {
   return (
     <section id="pricing" className="relative py-20 px-6 bg-[var(--bg-deep)] text-white overflow-hidden">
       <div aria-hidden="true" className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-[var(--green-600)] opacity-25 rounded-full blur-3xl" />
@@ -573,7 +574,7 @@ function Pricing({ onSignIn, loading }: { onSignIn: () => void; loading: boolean
           className="mt-9 btn btn-green text-base"
         >
           <GoogleG />
-          {loading ? 'Signing in…' : 'Start free with Google'}
+          {loading ? 'Signing in…' : signedIn ? 'Go to dashboard' : 'Start free with Google'}
         </button>
         <p className="mt-3 text-xs text-white/50">No credit card. Cancel anytime in one click.</p>
       </div>

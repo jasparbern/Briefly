@@ -29,9 +29,21 @@ export async function POST(request: Request) {
   const service = getServiceClient()
   const { data: existing } = await service
     .from('subscriptions')
-    .select('stripe_customer_id')
+    .select('stripe_customer_id, tier, status')
     .eq('user_id', user.id)
     .maybeSingle()
+
+  // Block double-subscribing. If they already have a live Pro sub, send them
+  // to the billing portal instead.
+  if (
+    existing?.tier === 'pro' &&
+    ['active', 'trialing', 'past_due'].includes(existing.status ?? '')
+  ) {
+    return NextResponse.json(
+      { error: 'You already have an active subscription. Manage it from your dashboard.', alreadySubscribed: true },
+      { status: 409 }
+    )
+  }
 
   let customerId = existing?.stripe_customer_id ?? null
   if (!customerId) {

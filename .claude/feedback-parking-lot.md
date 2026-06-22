@@ -21,6 +21,9 @@ Round 2 (after first successful test):
 - Payment page + free trial
 - Cybersecurity hardening
 
+Round 6:
+- Let users customize their email format (per-stream template). e.g. choose which buckets show, custom section names, length/voice toggle (terse vs friendly), include/exclude header preheader, etc.
+
 Round 5 (signup blocker — high priority when ready):
 - New users get "doesn't comply with Google's OAuth 2.0 policy" when trying to sign in.
 - Root cause: our Google OAuth app is unverified; only emails on the test-users list can sign in.

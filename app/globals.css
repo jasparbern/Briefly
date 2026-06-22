@@ -150,6 +150,81 @@ body {
   background-size: 22px 22px;
 }
 
+/* ----- Paper grain (vellum) overlay ----- */
+.grain {
+  position: relative;
+}
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+/* ----- Drop cap ----- */
+.dropcap::first-letter {
+  font-family: var(--font-display);
+  float: left;
+  font-size: 4.2rem;
+  line-height: 0.9;
+  padding: 0.4rem 0.6rem 0 0;
+  color: var(--green-700);
+  font-style: italic;
+}
+
+/* ----- Highlight underline (hand-drawn feel) ----- */
+.under-green {
+  background-image: linear-gradient(transparent 64%, rgba(16,185,129,0.32) 64%, rgba(16,185,129,0.32) 92%, transparent 92%);
+  background-repeat: no-repeat;
+}
+
+/* ----- Custom dot in wordmark (replaces the i dot) ----- */
+.wordmark .dot {
+  display: inline-block;
+  width: 0.42em;
+  height: 0.42em;
+  margin: 0 0.02em -0.05em 0.02em;
+  border-radius: 9999px;
+  background: var(--green-600);
+  vertical-align: baseline;
+  position: relative;
+  top: -0.62em;
+}
+
+/* ----- Inbox-vs-digest before/after ----- */
+.line-stack > div {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  margin-bottom: 6px;
+}
+.line-stack > div:nth-child(odd)  { width: 92%; }
+.line-stack > div:nth-child(even) { width: 84%; }
+.line-stack > div:nth-child(3n)   { width: 78%; }
+
+/* ----- Editorial section label ----- */
+.label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--green-700);
+}
+.label .num {
+  font-family: var(--font-inter), sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  color: var(--ink-mute);
+  border-left: 1px solid var(--line);
+  padding-left: 0.6rem;
+}
+
 /* ----- Bucket header pills ----- */
 .bucket-red   { color: var(--red);   background: #fee2e2; }
 .bucket-amber { color: var(--amber); background: #fef3c7; }

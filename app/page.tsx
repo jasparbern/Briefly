@@ -531,6 +531,22 @@ function Faq() {
   return (
     <section id="faq" className="py-16 px-6 bg-white">
       <div className="max-w-3xl mx-auto">
+
+        {/* Brand origin — dictionary entry */}
+        <aside className="reveal mb-12 bg-[var(--bg-soft)] border-l-4 border-[var(--green-600)] rounded-r-xl px-6 py-5">
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <span className="font-display text-2xl">abridge</span>
+            <span className="text-sm text-[var(--ink-mute)] tnum">/əˈbrɪdʒ/</span>
+            <span className="text-sm italic text-[var(--ink-soft)]">verb</span>
+          </div>
+          <p className="mt-2 text-[var(--ink)] text-pretty">
+            to shorten a text without losing its meaning.
+          </p>
+          <p className="mt-2 text-sm text-[var(--ink-soft)]">
+            That&apos;s what Abridgly does with your inbox.
+          </p>
+        </aside>
+
         <div className="reveal mb-8">
           <h2 className="font-display text-4xl md:text-5xl text-balance">
             Questions people ask.
@@ -607,7 +623,7 @@ function Footer() {
           <a href="#faq" className="hover:text-[var(--ink)] transition-colors">FAQ</a>
           <a href="/privacy" className="hover:text-[var(--ink)] transition-colors">Privacy</a>
           <a href="/terms" className="hover:text-[var(--ink)] transition-colors">Terms</a>
-          <a href="mailto:jasparbbernstein@gmail.com" className="hover:text-[var(--ink)] transition-colors">Contact</a>
+          <a href="/contact" className="hover:text-[var(--ink)] transition-colors">Contact</a>
         </div>
       </div>
     </footer>

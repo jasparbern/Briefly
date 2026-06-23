@@ -1,6 +1,6 @@
 import { google } from 'googleapis'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
-import { filterByTopic, type EmailMetadata } from './ai'
+import { filterByTopic, topicToGmailQueries, type EmailMetadata } from './ai'
 
 function getServiceClient() {
   return createServiceClient(
@@ -33,8 +33,10 @@ type StreamFilter = {
   topicDescription: string | null
 }
 
-/** Cap on inbox sample size for topic-mode (per stream-run). */
+/** Cap on the broad catch-all inbox sample for topic-mode (per stream-run). */
 const TOPIC_SAMPLE_CAP = 80
+/** Cap on total candidates (search hits + sample) we pull metadata for and filter. */
+const TOPIC_CANDIDATE_CAP = 150
 
 /**
  * Fetch emails for one stream of one user, based on the stream's filter mode.
@@ -101,16 +103,46 @@ export async function fetchEmailsForStream(
   if (filter.mode === 'topic' || filter.mode === 'both') {
     const description = (filter.topicDescription ?? '').trim()
     if (description) {
-      // Fetch a broad inbox sample. Skip ids we already collected from sender-mode.
-      const listRes = await gmail.users.messages.list({
-        userId: 'me',
-        q: `after:${cutoff}`,
-        maxResults: TOPIC_SAMPLE_CAP,
+      // High-recall path: turn the topic into Gmail searches. Gmail matches the full
+      // body + subject, so these find relevant mail no matter how deep it sits —
+      // unlike a blind "most recent N" sample, which silently drops older-in-window
+      // mail once the inbox is busy. We union the search hits with a broad sample
+      // (catch-all safety net), dedupe, then let the AI filter trim false positives.
+      const queries = await topicToGmailQueries(description)
+      const idSet = new Set<string>()
+
+      const searches: Promise<void>[] = queries.map(async (frag) => {
+        try {
+          const res = await gmail.users.messages.list({
+            userId: 'me',
+            q: `(${frag}) after:${cutoff}`,
+            maxResults: 40,
+          })
+          for (const m of res.data.messages ?? []) if (m.id) idSet.add(m.id)
+        } catch {
+          // A malformed AI-generated query shouldn't sink the whole run.
+        }
       })
 
-      const candidateIds = (listRes.data.messages ?? [])
-        .map((m) => m.id)
-        .filter((id): id is string => !!id && !collected.has(id))
+      // Broad fallback sample so nothing on-topic is lost if query gen underperforms.
+      searches.push(
+        (async () => {
+          const res = await gmail.users.messages.list({
+            userId: 'me',
+            q: `after:${cutoff}`,
+            maxResults: TOPIC_SAMPLE_CAP,
+          })
+          for (const m of res.data.messages ?? []) if (m.id) idSet.add(m.id)
+        })()
+      )
+
+      await Promise.all(searches)
+
+      // Cap candidates so a broad union can't blow the function time budget. The
+      // targeted query hits are already high-precision; this only trims the long tail.
+      const candidateIds = Array.from(idSet)
+        .filter((id) => !collected.has(id))
+        .slice(0, TOPIC_CANDIDATE_CAP)
 
       // Fetch metadata in parallel for filtering.
       const metas = await Promise.all(

@@ -266,3 +266,68 @@ Examples of valid replies:
   return Array.from(picked)
 }
 
+/**
+ * Turn a free-text topic description into a set of Gmail search queries.
+ *
+ * Gmail search matches the full body + subject (not just a snippet), so running
+ * these queries finds relevant mail no matter how deep in the inbox it sits — this
+ * is the high-recall path that a blind "most recent N emails" sample misses.
+ *
+ * Returns an array of Gmail query fragments (no date filter — the caller adds the
+ * lookback window). Falls back to [] on any error so the caller can still use its
+ * broad sample.
+ */
+export async function topicToGmailQueries(description: string): Promise<string[]> {
+  const desc = description.trim()
+  if (!desc) return []
+
+  const prompt = `Convert a person's email-topic description into Gmail search queries.
+
+Topic: "${desc}"
+
+Output 3-6 Gmail search queries that together find every email about this topic with
+high recall. Use Gmail search operators. You may use:
+- keyword groups with OR inside parentheses, e.g. (order OR shipped OR "tracking number")
+- exact phrases in quotes
+- from: with a domain, e.g. from:(usps.com OR ups.com OR fedex.com)
+- category: one of primary, social, promotions, updates, forums, purchases
+- subject:(...)
+
+Gmail searches the full message body and subject, so keyword queries catch emails even
+when the sender's wording differs from the topic. Favor recall: include synonyms,
+related senders, and the category that best fits.
+
+Reference for common topics (adapt, don't copy blindly):
+- packages/shipping: category:purchases, (order OR shipped OR "out for delivery" OR delivered OR "tracking number" OR tracking), from:(usps.com OR ups.com OR fedex.com OR dhl.com OR amazon.com)
+- school: (school OR teacher OR homework OR "permission slip" OR "field trip" OR PTA OR principal OR enrollment OR "picture day"), from:(schoology.com OR classdojo.com OR powerschool.com OR parentsquare.com OR remind.com)
+- bills/money: category:purchases, (invoice OR bill OR "payment due" OR statement OR autopay OR "past due" OR renew OR receipt)
+- work: (meeting OR deadline OR review OR "sign off" OR project OR payroll OR PTO), from:(slack.com OR notion.so OR atlassian.net OR asana.com OR linear.app)
+- travel: (flight OR itinerary OR "boarding pass" OR reservation OR "confirmation number" OR hotel OR "check-in")
+- health: (appointment OR prescription OR "test results" OR refill OR doctor OR pharmacy OR MyChart)
+
+For a niche topic, invent the queries: the synonyms a person would use, the domains of
+senders who write about it, and the right category.
+
+Return ONLY a JSON array of query strings. No prose, no markdown fences.
+Example: ["category:purchases", "(order OR shipped OR \\"tracking number\\")", "from:(usps.com OR ups.com OR fedex.com)"]`
+
+  try {
+    const message = await client.messages.create({
+      model: 'claude-haiku-4-5',
+      max_tokens: 400,
+      messages: [{ role: 'user', content: prompt }],
+    })
+    const text = message.content[0]?.type === 'text' ? message.content[0].text : '[]'
+    const parsed = JSON.parse(
+      text.trim().replace(/^```(?:json)?\s*/i, '').replace(/```$/m, '').trim()
+    )
+    if (!Array.isArray(parsed)) return []
+    return parsed
+      .filter((q): q is string => typeof q === 'string' && q.trim().length > 0)
+      .map((q) => q.trim())
+      .slice(0, 6)
+  } catch {
+    return []
+  }
+}
+

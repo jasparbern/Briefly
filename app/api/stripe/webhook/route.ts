@@ -34,6 +34,16 @@ export async function POST(req: Request) {
 
   const service = getServiceClient()
 
+  // Idempotency: insert event_id; if it conflicts we've seen this event before.
+  // Stripe retries on 5xx, and sometimes delivers the same event twice — without
+  // this guard, a checkout.session.completed retry could re-fire customer creation.
+  const { error: dupErr } = await service
+    .from('stripe_events')
+    .insert({ id: event.id, type: event.type })
+  if (dupErr && (dupErr.code === '23505' || /duplicate/i.test(dupErr.message))) {
+    return NextResponse.json({ received: true, deduped: true })
+  }
+
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session

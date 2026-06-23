@@ -56,12 +56,12 @@ export default function PricingPage() {
       <section className="px-6 pt-16 pb-10">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="font-display text-5xl md:text-6xl leading-[1.02] text-balance">
-            Free to try.
+            Free forever.
             <br />
-            <em className="text-[var(--green-700)]">Pay only if you stay.</em>
+            <em className="text-[var(--green-700)]">$7 if you want more.</em>
           </h1>
           <p className="mt-5 text-lg text-[var(--ink)] max-w-xl mx-auto">
-            14 days of Pro on the house. No card required. Cancel in one click.
+            Pro starts with 14 days free. No card to start. Cancel in one click.
           </p>
         </div>
       </section>
@@ -95,7 +95,7 @@ export default function PricingPage() {
           <article className="bg-white rounded-3xl border border-[var(--line)] p-7 flex flex-col">
             <div>
               <h2 className="font-display text-3xl">Free</h2>
-              <p className="mt-2 text-[var(--ink-soft)] text-sm">For trying it out.</p>
+              <p className="mt-2 text-[var(--ink-soft)] text-sm">Get the feel.</p>
             </div>
             <div className="mt-5 flex items-baseline gap-1">
               <span className="font-display text-5xl tnum">$0</span>
@@ -123,7 +123,7 @@ export default function PricingPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="font-display text-3xl">Pro</h2>
-                  <p className="mt-2 text-white/70 text-sm">For real use.</p>
+                  <p className="mt-2 text-white/70 text-sm">For actual life.</p>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--green-600)] text-white text-[10px] font-semibold uppercase tracking-wider">
                   {tier === 'pro' ? 'Current plan' : '14-day free trial'}
@@ -159,7 +159,7 @@ export default function PricingPage() {
                 </button>
               )}
               <p className="mt-3 text-xs text-white/50 text-center">
-                {tier === 'pro' ? 'You can manage billing from the dashboard.' : 'No card required to start. Cancel anytime.'}
+                {tier === 'pro' ? 'Manage billing from your dashboard.' : 'No card to start. Cancel in one click.'}
               </p>
             </div>
           </article>

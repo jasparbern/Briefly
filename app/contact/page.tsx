@@ -48,12 +48,12 @@ export default function ContactPage() {
       <section className="px-6 pt-16 pb-10">
         <div className="max-w-2xl mx-auto text-center">
           <h1 className="font-display text-5xl md:text-6xl leading-[1.02] text-balance">
-            Say something.
+            Tell me anything.
             <br />
-            <em className="text-[var(--green-700)]">We&apos;re listening.</em>
+            <em className="text-[var(--green-700)]">I read every message.</em>
           </h1>
           <p className="mt-5 text-lg text-[var(--ink)] max-w-xl mx-auto">
-            Feedback, bugs, weird ideas, &ldquo;why does it do this.&rdquo; All welcome.
+            Bug, feature idea, &ldquo;why does it do this&rdquo;, hate mail. Send it.
           </p>
         </div>
       </section>
@@ -67,9 +67,9 @@ export default function ContactPage() {
                   <path d="m4 12 5 5L20 6"/>
                 </svg>
               </div>
-              <h2 className="font-display text-2xl">Got it. Thanks.</h2>
+              <h2 className="font-display text-2xl">Sent.</h2>
               <p className="mt-2 text-sm text-[var(--ink-soft)]">
-                I read every one. If you left an email I&apos;ll reply when I can.
+                If you left an email, I&apos;ll reply within a day.
               </p>
               <button
                 onClick={() => setStatus('idle')}
@@ -162,7 +162,7 @@ export default function ContactPage() {
               </button>
 
               <p className="text-xs text-[var(--ink-mute)] text-center">
-                Or email <a href="mailto:jasparbbernstein@gmail.com" className="underline">jasparbbernstein@gmail.com</a> directly.
+                Prefer email? <a href="mailto:jasparbbernstein@gmail.com" className="underline">jasparbbernstein@gmail.com</a>
               </p>
             </form>
           )}

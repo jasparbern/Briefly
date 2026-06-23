@@ -505,27 +505,27 @@ function Faq() {
   const qs = [
     {
       q: 'Will Abridgly miss something important?',
-      a: 'We use a conservative bias. Anything that looks like a deadline, dollar amount, signed form, or schedule change lands in Action Required or Important. Reply-all noise gets grouped, not deleted.',
+      a: 'Anything with a deadline, dollar amount, signed form, or schedule change lands in Action Required or Important. Reply-all noise gets grouped, not dropped.',
     },
     {
       q: 'Can someone else get the same digest?',
-      a: 'Yes. Set a "delivery to" email on any stream. One person owns the Gmail. Anyone you choose gets the digest.',
+      a: 'Yes. Set a "send to" email on any stream. You own the Gmail. They get the recap.',
     },
     {
-      q: 'Can I have different cadences for different things?',
-      a: 'Yes. Each stream has its own schedule. Work daily, school on Sundays, packages whenever. They never mix.',
+      q: 'Can I run different schedules for different things?',
+      a: 'Yes. Each stream gets its own cadence. Work daily, school Sundays, packages whenever. They never mix.',
     },
     {
       q: 'What does Abridgly do with my email?',
-      a: 'We read it to generate the digest, then forget it. We never sell anything. We never train AI on your mail. Delete your account and everything is gone within 24 hours.',
+      a: 'Reads it, summarizes it, forgets it. No selling, no training AI, no ads. Delete your account and your data is gone within 24 hours.',
     },
     {
-      q: 'Can I see exactly what was read?',
-      a: 'Every email Abridgly processed is listed in your dashboard. You can remove any one of them from our records with one click.',
+      q: 'Can I see what was read?',
+      a: 'Your dashboard lists every email Abridgly processed. Remove any one with a click.',
     },
     {
       q: 'How much does it cost?',
-      a: 'Free forever for one stream, weekly delivery, up to 5 senders. Pro is $7/month for up to 5 streams, daily delivery, 25 senders per stream, and digests sent to any email. Pro starts with a 14-day free trial, no card required.',
+      a: 'Free for one stream, weekly, 5 senders. Pro is $7/month: 5 streams, daily delivery, 25 senders each, send to any inbox. Pro starts with 14 days free, no card.',
     },
   ]
   return (
@@ -543,7 +543,7 @@ function Faq() {
             to shorten a text without losing its meaning.
           </p>
           <p className="mt-2 text-sm text-[var(--ink-soft)]">
-            That&apos;s what Abridgly does with your inbox.
+            We do this for your inbox.
           </p>
         </aside>
 
@@ -578,12 +578,12 @@ function Pricing({ onSignIn, loading, signedIn }: { onSignIn: () => void; loadin
       <div className="relative max-w-3xl mx-auto text-center reveal">
         <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--green-300)] mb-4">Pricing</span>
         <h2 className="font-display text-5xl md:text-6xl text-balance">
-          Free to try.
+          Free forever.
           <br />
-          <em className="text-[var(--green-300)]">$7/mo if you stay.</em>
+          <em className="text-[var(--green-300)]">$7 when you want more.</em>
         </h2>
         <p className="mt-5 text-white/70 max-w-md mx-auto">
-          Free forever for one stream, weekly. Pro adds up to 5 streams, daily delivery, and digests sent to any inbox. 14-day Pro trial. No card to start.
+          Free covers one stream, weekly. Pro gives you 5 streams, daily delivery, and send-to-any-inbox. 14 days free first. No card.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
@@ -600,7 +600,7 @@ function Pricing({ onSignIn, loading, signedIn }: { onSignIn: () => void; loadin
             See plans
           </a>
         </div>
-        <p className="mt-3 text-xs text-white/50">Cancel anytime in one click.</p>
+        <p className="mt-3 text-xs text-white/50">Cancel in one click.</p>
       </div>
     </section>
   )

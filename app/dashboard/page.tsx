@@ -1,7 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useRef, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 type Sender = {
@@ -46,6 +46,29 @@ type TierInfo = {
 const DAYS_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const DAYS_LONG = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
+// Names we auto-assign — safe to overwrite when the user gives us something better.
+function isGenericStreamName(name: string): boolean {
+  const n = name.trim().toLowerCase()
+  return (
+    n === '' || n === 'default' || n === 'untitled' ||
+    n === 'my digest' || n === 'my first digest' || n === 'new stream' ||
+    /^stream \d+$/.test(n)
+  )
+}
+
+// Turn a topic description into a short, title-ish stream name.
+function deriveStreamName(topic: string): string {
+  const cleaned = topic
+    .trim()
+    .replace(/^(anything|everything|all)\s+(related to|about|regarding|concerning|on|with)\s+/i, '')
+    .replace(/^(related to|about|regarding|concerning)\s+/i, '')
+    .replace(/[."']/g, '')
+    .trim()
+  if (!cleaned) return 'New stream'
+  const short = cleaned.length > 32 ? cleaned.slice(0, 32).replace(/\s+\S*$/, '') + '…' : cleaned
+  return short.charAt(0).toUpperCase() + short.slice(1)
+}
+
 export default function Dashboard() {
   return (
     <Suspense fallback={null}>
@@ -65,6 +88,7 @@ function DashboardInner() {
   const [expandedStreamId, setExpandedStreamId] = useState<string | null>(null)
   const [flash, setFlash] = useState<{ text: string; tone: 'good' | 'bad' } | null>(null)
   const [tier, setTier] = useState<TierInfo | null>(null)
+  const autoCreatedRef = useRef(false)
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -95,12 +119,15 @@ function DashboardInner() {
     const res = await fetch('/api/streams')
     const data: Stream[] = await res.json()
     setStreams(data)
-    // If a user has no streams yet (brand new account), create one.
+    // If a user has no streams yet (brand new account), create one. The ref guard
+    // stops a double-fired effect from inserting two identical "My digest" streams.
     if (data.length === 0) {
+      if (autoCreatedRef.current) return
+      autoCreatedRef.current = true
       const created = await fetch('/api/streams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'My digest' }),
+        body: JSON.stringify({ name: 'My first digest' }),
       }).then((r) => r.json())
       setStreams([created])
       setExpandedStreamId(created.id)
@@ -151,12 +178,10 @@ function DashboardInner() {
   }
 
   async function createStream() {
-    const name = window.prompt('Name this stream (e.g. School, Packages, Soccer league):')
-    if (!name?.trim()) return
     const res = await fetch('/api/streams', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name.trim() }),
+      body: JSON.stringify({ name: `Stream ${streams.length + 1}` }),
     })
     const created = await res.json()
     if (!res.ok || created?.error) {
@@ -165,6 +190,7 @@ function DashboardInner() {
     }
     setStreams((prev) => [...prev, created])
     setExpandedStreamId(created.id)
+    showFlash('New stream added below. Name it and pick what it should watch.')
   }
 
   async function patchStream(id: string, patch: Partial<Stream>) {
@@ -244,11 +270,13 @@ function DashboardInner() {
 
         {/* Streams */}
         <section>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-2">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Your streams</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Your streams{streams.length > 0 ? ` (${streams.length})` : ''}
+              </h2>
               <p className="text-sm text-gray-600">
-                Each stream is its own subscription. Different senders, different cadence, different email.
+                Each one is a separate digest with its own senders, schedule, and inbox.
               </p>
             </div>
             {tier && streams.length >= tier.limits.maxStreams && tier.tier !== 'pro' ? (
@@ -262,12 +290,15 @@ function DashboardInner() {
             ) : (
               <button
                 onClick={createStream}
-                className="text-sm bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors whitespace-nowrap"
+                className="text-sm bg-[var(--green-600)] text-white font-medium px-4 py-2 rounded-lg hover:bg-[var(--green-700)] transition-colors whitespace-nowrap"
               >
-                + New stream
+                + Add a stream
               </button>
             )}
           </div>
+          <p className="text-xs text-gray-400 mb-4">
+            Tap a stream to edit it. Want a separate digest? Use “Add a stream” instead of editing this one.
+          </p>
 
           <div className="space-y-4">
             {streams.map((stream) => (
@@ -374,6 +405,13 @@ function StreamCard({
     stream.cadence === 'weekly' ? `Weekly · ${DAYS_LONG[stream.day_of_week]}` :
     stream.cadence === 'custom' ? `${stream.custom_days?.length ?? 0} days/week` :
     'Weekly'
+
+  const watchLabel =
+    stream.filter_mode === 'topic'
+      ? (stream.topic_description?.trim() ? `Topic: ${stream.topic_description.trim()}` : 'Topic: not set yet')
+      : stream.filter_mode === 'both'
+        ? (stream.topic_description?.trim() ? `Senders + topic: ${stream.topic_description.trim()}` : 'Senders + topic')
+        : 'Watches specific senders'
 
   /* sender ops */
   async function addSender(emailOverride?: string, labelOverride?: string) {
@@ -498,7 +536,13 @@ function StreamCard({
               {stream.name}
             </button>
           )}
-          <div className="text-xs text-gray-500 mt-0.5">
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide bg-[var(--green-50)] text-[var(--green-700)]">
+              {stream.filter_mode === 'topic' ? 'Topic' : stream.filter_mode === 'both' ? 'Both' : 'Senders'}
+            </span>
+            <span className="text-xs text-gray-600 truncate">{watchLabel}</span>
+          </div>
+          <div className="text-xs text-gray-400 mt-0.5">
             {cadenceLabel} · lookback {stream.lookback_days}d
             {stream.delivery_email ? ` · to ${stream.delivery_email}` : ''}
             {stream.paused ? ' · paused' : ''}
@@ -547,7 +591,11 @@ function StreamCard({
                   defaultValue={stream.topic_description ?? ''}
                   onBlur={(e) => {
                     const v = e.target.value.trim() || null
-                    if (v !== stream.topic_description) onPatch({ topic_description: v })
+                    if (v === stream.topic_description) return
+                    // Auto-name the stream from its topic if it still has a default name.
+                    const patch: Partial<Stream> = { topic_description: v }
+                    if (v && isGenericStreamName(stream.name)) patch.name = deriveStreamName(v)
+                    onPatch(patch)
                   }}
                   rows={2}
                   placeholder='e.g. "Anything about housing, deadlines, or financial aid"'

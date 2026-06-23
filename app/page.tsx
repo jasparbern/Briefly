@@ -99,7 +99,7 @@ function Wordmark({ size = 'sm' }: { size?: 'sm' | 'lg' }) {
   const cls = size === 'sm' ? 'text-[17px]' : 'text-3xl'
   return (
     <span className={`wordmark font-semibold tracking-tight ${cls}`}>
-      Br<span className="dot" aria-hidden="true" />efly
+      Abr<span className="dot" aria-hidden="true" />dgly
     </span>
   )
 }
@@ -384,7 +384,7 @@ function FullDigest() {
     <article className="bg-white rounded-3xl border border-[var(--line)] shadow-xl p-7 text-left rotate-[0.4deg] hover:rotate-0 transition-transform duration-500">
       <div className="flex items-center justify-between text-[11px] text-[var(--ink-mute)] tnum">
         <span className="uppercase tracking-widest">Sun · 9:00 am</span>
-        <span>Briefly</span>
+        <span>Abridgly</span>
       </div>
       <h3 className="font-display text-2xl mt-3 leading-tight">📬 Your week of subscriptions — 1 renewal, 3 reads</h3>
       <p className="text-[var(--ink-mute)] text-xs mt-1">28 emails scanned. Here&apos;s what was worth your time.</p>
@@ -504,7 +504,7 @@ function How() {
 function Faq() {
   const qs = [
     {
-      q: 'Will Briefly miss something important?',
+      q: 'Will Abridgly miss something important?',
       a: 'We use a conservative bias. Anything that looks like a deadline, dollar amount, signed form, or schedule change lands in Action Required or Important. Reply-all noise gets grouped, not deleted.',
     },
     {
@@ -516,12 +516,12 @@ function Faq() {
       a: 'Yes. Each stream has its own schedule. Work daily, school on Sundays, packages whenever. They never mix.',
     },
     {
-      q: 'What does Briefly do with my email?',
+      q: 'What does Abridgly do with my email?',
       a: 'We read it to generate the digest, then forget it. We never sell anything. We never train AI on your mail. Delete your account and everything is gone within 24 hours.',
     },
     {
       q: 'Can I see exactly what was read?',
-      a: 'Every email Briefly processed is listed in your dashboard. You can remove any one of them from our records with one click.',
+      a: 'Every email Abridgly processed is listed in your dashboard. You can remove any one of them from our records with one click.',
     },
     {
       q: 'How much will it cost?',

@@ -138,7 +138,7 @@ async function processStream(stream: StreamRow) {
 
   // Stamp the stream name onto the subject so multi-stream users can tell digests apart.
   const subject = stream.name && stream.name !== 'Default'
-    ? `${digest.subject.replace(/^📬 Briefly[—\-: ]*/, '📬 Briefly · ' + stream.name + ' — ')}`
+    ? `${digest.subject.replace(/^📬 Abridgly[—\-: ]*/, '📬 Abridgly · ' + stream.name + ' — ')}`
     : digest.subject
 
   await sendDigestEmail(deliveryEmail, { subject, body: digest.body })

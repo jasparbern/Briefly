@@ -32,7 +32,7 @@ export async function GET() {
   return new NextResponse(JSON.stringify(payload, null, 2), {
     headers: {
       'Content-Type': 'application/json',
-      'Content-Disposition': `attachment; filename="briefly-export-${user.id.slice(0, 8)}.json"`,
+      'Content-Disposition': `attachment; filename="abridgly-export-${user.id.slice(0, 8)}.json"`,
     },
   })
 }

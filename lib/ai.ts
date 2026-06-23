@@ -17,7 +17,7 @@ export type Digest = {
 }
 
 const FALLBACK: Digest = {
-  subject: '📬 Briefly — Nothing new this week',
+  subject: '📬 Abridgly — Nothing new this week',
   body: 'No emails from your watched senders this week.',
 }
 
@@ -37,7 +37,7 @@ ${e.body}
     )
     .join('\n\n')
 
-  const prompt = `You are Briefly. You read someone's email and write the recap a friend would text them — short, direct, no jargon. The reader is busy and skimming on their phone.
+  const prompt = `You are Abridgly. You read someone's email and write the recap a friend would text them — short, direct, no jargon. The reader is busy and skimming on their phone.
 
 Here are this week's emails:
 
@@ -50,9 +50,9 @@ On the first line, output:
 SUBJECT: <one short subject line>
 
 The subject should name the most important thing this week, with a number if there are deadlines. Examples:
-SUBJECT: 📬 Briefly — 2 forms due before June 30
-SUBJECT: 📬 Briefly — Housing payment Sept 1, one transcript still missing
-SUBJECT: 📬 Briefly — Quiet week, 1 deadline to keep on your radar
+SUBJECT: 📬 Abridgly — 2 forms due before June 30
+SUBJECT: 📬 Abridgly — Housing payment Sept 1, one transcript still missing
+SUBJECT: 📬 Abridgly — Quiet week, 1 deadline to keep on your radar
 
 Do not write "weekly digest" or "your update". Be specific to this week's content.
 
@@ -111,7 +111,7 @@ function parseDigest(raw: string): Digest {
 
   if (subjectIdx === -1) {
     // No subject line — fall back to a default.
-    return { subject: '📬 Briefly — Your digest', body: raw.trim() }
+    return { subject: '📬 Abridgly — Your digest', body: raw.trim() }
   }
 
   const subject = lines[subjectIdx].replace(/^SUBJECT:\s*/i, '').trim()
@@ -121,7 +121,7 @@ function parseDigest(raw: string): Digest {
     .replace(/^\s+/, '')
 
   return {
-    subject: subject || '📬 Briefly — Your digest',
+    subject: subject || '📬 Abridgly — Your digest',
     body: body || raw.trim(),
   }
 }

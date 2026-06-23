@@ -9,7 +9,7 @@ const inter = Inter({
 })
 
 // Fraunces — variable optical-sizing serif. Distinctive opsz + SOFT axes
-// give Briefly a memorable hand-set magazine feel.
+// give Abridgly a memorable hand-set magazine feel.
 const fraunces = Fraunces({
   subsets: ["latin"],
   variable: "--font-display",
@@ -21,18 +21,18 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://briefly-gamma-red.ve
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
-  title: "Briefly — Your week of email, in one read",
+  title: "Abridgly — Your week of email, in one read",
   description: "Pick who matters. Skip the rest. One clean recap, on your schedule.",
   openGraph: {
-    title: "Briefly — Your week of email, in one read",
+    title: "Abridgly — Your week of email, in one read",
     description: "Pick who matters. Skip the rest. One clean recap, on your schedule.",
     url: APP_URL,
-    siteName: "Briefly",
+    siteName: "Abridgly",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Briefly — Your week of email, in one read",
+    title: "Abridgly — Your week of email, in one read",
     description: "Pick who matters. Skip the rest. One clean recap, on your schedule.",
   },
   robots: { index: true, follow: true },

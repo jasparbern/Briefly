@@ -193,7 +193,7 @@ function DashboardInner() {
               <rect x="3" y="6" width="18" height="13" rx="2" />
             </svg>
           </span>
-          Briefly
+          Abridgly
         </a>
         <div className="flex items-center gap-4 text-sm text-[var(--ink-soft)]">
           <span className="hidden sm:inline tnum">{user?.email}</span>
@@ -224,7 +224,7 @@ function DashboardInner() {
             <div>
               <h2 className="text-base font-semibold mb-1 text-gray-900">Connect Gmail</h2>
               <p className="text-sm text-gray-600">
-                Briefly reads your Gmail (read-only) and never deletes or sends anything as you.
+                Abridgly reads your Gmail (read-only) and never deletes or sends anything as you.
               </p>
             </div>
             {gmailConnected ? (
@@ -291,7 +291,7 @@ function DashboardInner() {
         <section className="bg-white rounded-2xl border border-gray-200 p-6">
           <h2 className="text-base font-semibold mb-1 text-gray-900">Account</h2>
           <p className="text-sm text-gray-600 mb-5">
-            Download a copy of everything Briefly has on you, or delete your account.
+            Download a copy of everything Abridgly has on you, or delete your account.
           </p>
           <div className="flex flex-wrap gap-3">
             {tier?.tier === 'pro' && (
@@ -519,7 +519,7 @@ function StreamCard({
           {/* What to watch */}
           <div>
             <h3 className="text-sm font-semibold text-gray-900 mb-2">What to watch</h3>
-            <p className="text-xs text-gray-500 mb-3">Pick how Briefly decides which emails to include.</p>
+            <p className="text-xs text-gray-500 mb-3">Pick how Abridgly decides which emails to include.</p>
             <div className="inline-flex rounded-md border border-gray-200 overflow-hidden text-xs mb-3">
               {([
                 { v: 'senders', label: 'By sender' },
@@ -554,7 +554,7 @@ function StreamCard({
                   className="w-full text-sm border border-gray-200 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Briefly samples your inbox and picks emails that match. Topic-mode reads more of your inbox per run.
+                  Abridgly samples your inbox and picks emails that match. Topic-mode reads more of your inbox per run.
                 </p>
               </div>
             )}
@@ -572,7 +572,7 @@ function StreamCard({
                 )}
               </span>
             </div>
-            <p className="text-xs text-gray-500 mb-3">Emails Briefly reads for this stream.</p>
+            <p className="text-xs text-gray-500 mb-3">Emails Abridgly reads for this stream.</p>
 
             {loadingSenders && <p className="text-xs text-gray-500">Loading…</p>}
 

@@ -29,7 +29,7 @@ export async function sendDigestEmail(to: string, digest: Digest): Promise<void>
 <p class="preheader">${escapeHtml(digest.subject)}</p>
 ${convertToHtml(digest.body)}
 <div class="footer">
-  You set up Briefly to send this. Adjust senders, cadence, or pause delivery in your <a href="${process.env.NEXT_PUBLIC_APP_URL ?? ''}/dashboard">dashboard</a>.
+  You set up Abridgly to send this. Adjust senders, cadence, or pause delivery in your <a href="${process.env.NEXT_PUBLIC_APP_URL ?? ''}/dashboard">dashboard</a>.
 </div>
 </body>
 </html>`

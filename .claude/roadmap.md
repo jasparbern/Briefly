@@ -1,4 +1,4 @@
-# Briefly — Parking lot regrouped by topic
+# Abridgly — Parking lot regrouped by topic
 
 Source: `.claude/feedback-parking-lot.md` (3 rounds of user feedback) + outstanding tasks.
 
@@ -9,7 +9,7 @@ Source: `.claude/feedback-parking-lot.md` (3 rounds of user feedback) + outstand
 ## A. The digest email itself
 *What lands in the user's inbox each week — content, voice, formatting, presentation.*
 
-- **Subject line** — generate something specific each week, like `📬 Briefly — Cal Poly: 2 things due this week`, instead of the generic `Your weekly digest`.
+- **Subject line** — generate something specific each week, like `📬 Abridgly — Cal Poly: 2 things due this week`, instead of the generic `Your weekly digest`.
 - **Voice / tone** — rewrite the Claude prompt so it sounds like a friend texting the recap, not a system report.
 - **Bullet length** — cap each bullet to ~12 words. Right now they're long and skimmable, not punchy.
 - **Section structure** — Action Required + Important Updates always show. Opportunities omitted when empty. Safe to Ignore collapsed by default.
@@ -22,13 +22,13 @@ Source: `.claude/feedback-parking-lot.md` (3 rounds of user feedback) + outstand
 ---
 
 ## B. Sender setup & management
-*How users tell Briefly what to watch.*
+*How users tell Abridgly what to watch.*
 
 - **AI sender suggestion** — let user type vague descriptions ("school stuff," "my Adobe Sign emails") and AI proposes matching senders from a sample of their inbox.
 - **Instructions field optional** — currently required-feeling; should default to a sensible behavior when blank.
 - **Inline editing** — click an existing sender to edit label + instructions without going through "delete + re-add."
-- **Email transparency** — save every email Briefly processed in a `digest_emails` table; expose a "what did the AI read?" view on dashboard.
-- **Per-email delete** — let user remove individual emails from Briefly's records.
+- **Email transparency** — save every email Abridgly processed in a `digest_emails` table; expose a "what did the AI read?" view on dashboard.
+- **Per-email delete** — let user remove individual emails from Abridgly's records.
 
 *Files involved:* `app/dashboard/page.tsx`, new `/api/senders/suggest` endpoint, new DB table, `lib/gmail.ts`
 
@@ -65,7 +65,7 @@ Source: `.claude/feedback-parking-lot.md` (3 rounds of user feedback) + outstand
 *Why does the sign-in flow look "sus" to first-time users.*
 
 - **Google OAuth verification** — submit the app to Google's review process. Lifts the 100-test-user cap and removes "this app isn't verified" warning. Free, takes 2-6 weeks.
-- **Custom domain** — once we own `briefly.app` (or similar), the OAuth URL shows that instead of `abridgly.com`. Cleaner trust signal.
+- **Custom domain** — owning `abridgly.com` means the OAuth URL shows that instead of `vercel.app`. Cleaner trust signal.
 - **Email sender domain verification** in Resend → digests stop landing in Spam, from address becomes `digest@yourdomain.com`.
 - **Privacy policy** page (`/privacy`) — required by Google for OAuth verification.
 - **Terms of service** page (`/terms`).
@@ -78,7 +78,7 @@ Source: `.claude/feedback-parking-lot.md` (3 rounds of user feedback) + outstand
 *User control + legal requirements as we get real users.*
 
 - **Delete-my-account button** — cascade delete user + all their senders, schedules, digests, processed emails.
-- **Export-my-data button** — download a JSON of everything Briefly has on the user.
+- **Export-my-data button** — download a JSON of everything Abridgly has on the user.
 - **Scope lockdown** — verify Gmail scope stays at `readonly` (already does, but document it).
 - **GDPR-ish data dump** — see export-my-data above.
 
@@ -131,7 +131,7 @@ Source: `.claude/feedback-parking-lot.md` (3 rounds of user feedback) + outstand
 
 - Slack / Discord delivery
 - iOS / Android notification (not full app)
-- Multi-account Gmail (work + personal in one Briefly)
+- Multi-account Gmail (work + personal in one Abridgly)
 - Cross-sender deduplication (the same event in 3 emails → 1 bullet)
 - "Watch this thread" — explicit pin to surface a thread regardless of sender rules
 - Shareable digest links (read-only public URL)

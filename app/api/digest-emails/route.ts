@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
-// GET /api/digest-emails — list the emails Briefly processed for the current user.
+// GET /api/digest-emails — list the emails Abridgly processed for the current user.
 // Optional query: ?limit=N&digestId=<uuid> to scope to one digest.
 export async function GET(request: Request) {
   const supabase = await createClient()

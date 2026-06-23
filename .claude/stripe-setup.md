@@ -11,7 +11,7 @@ button returns a 500 error.
 ## 2. Create the Pro product
 
 - Stripe dashboard → **Products** → **+ Add product**
-- Name: `Briefly Pro`
+- Name: `Abridgly Pro`
 - Pricing model: **Recurring**, monthly, **$5.00 USD** (or whatever you settle on)
 - Click **Save product**
 - On the resulting page, copy the **Price ID** (looks like `price_1Q...`)

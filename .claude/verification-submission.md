@@ -26,7 +26,7 @@ Web application
 
 ## App description (shown on consent screen)
 
-Briefly reads emails from senders the user selects, sends those emails to an AI to generate a recap, and delivers the recap to the user's inbox on the schedule they choose (daily, weekly, or custom). The goal is to surface deadlines, payments, and important updates without making the user dig through their inbox.
+Abridgly reads emails from senders the user selects, sends those emails to an AI to generate a recap, and delivers the recap to the user's inbox on the schedule they choose (daily, weekly, or custom). The goal is to surface deadlines, payments, and important updates without making the user dig through their inbox.
 
 ---
 
@@ -34,7 +34,7 @@ Briefly reads emails from senders the user selects, sends those emails to an AI 
 
 ### `https://www.googleapis.com/auth/gmail.readonly`
 
-Briefly needs to read message contents from the senders the user has explicitly added to their watchlist so the AI can generate a summary. Only emails from sender addresses or domains the user has chosen are pulled. Briefly never reads other mail, never sends mail as the user, and never modifies or deletes mail. We do not store full message bodies long-term — only the subject, snippet, and sender for the "what did the AI read?" view, which the user can delete from at any time.
+Abridgly needs to read message contents from the senders the user has explicitly added to their watchlist so the AI can generate a summary. Only emails from sender addresses or domains the user has chosen are pulled. Abridgly never reads other mail, never sends mail as the user, and never modifies or deletes mail. We do not store full message bodies long-term — only the subject, snippet, and sender for the "what did the AI read?" view, which the user can delete from at any time.
 
 ### `https://www.googleapis.com/auth/userinfo.email`
 
@@ -51,7 +51,7 @@ Standard OpenID Connect for basic identity at sign-in.
 Gmail API data is used exclusively to:
 1. Locate messages matching the user's watched senders within a user-chosen lookback window (1-30 days).
 2. Pass the contents to our AI provider so it can generate a recap.
-3. Display the list of emails Briefly read for transparency in the user's dashboard.
+3. Display the list of emails Abridgly read for transparency in the user's dashboard.
 
 This data is not used for advertising, sold to third parties, or used to train AI models.
 
@@ -61,7 +61,7 @@ This data is not used for advertising, sold to third parties, or used to train A
 
 Required: a 2-3 minute screencast on YouTube (unlisted is fine). Script:
 
-1. **(0:00-0:15)** Open the home page at YOUR_DOMAIN. Mention what Briefly does in one sentence.
+1. **(0:00-0:15)** Open the home page at YOUR_DOMAIN. Mention what Abridgly does in one sentence.
 2. **(0:15-0:45)** Click "Get started with Google." Show the Google OAuth consent screen, including the requested `gmail.readonly` scope. Approve it. Land on the dashboard.
 3. **(0:45-1:15)** Click "Connect Gmail." Show the second consent screen for `gmail.readonly`. Approve. Show "✓ Connected" state.
 4. **(1:15-1:45)** Create a stream named "School." Add a sender (e.g. `@calpoly.edu`). Show optional instructions field.
@@ -70,11 +70,11 @@ Required: a 2-3 minute screencast on YouTube (unlisted is fine). Script:
 7. **(2:45-3:00)** Go to Account → "Delete my account" (don't click through). Mention that this wipes all data.
 
 Voiceover script outline (read aloud during recording):
-- "Briefly is a weekly email digest service. Users pick senders they care about, and we send a recap once a day, week, or custom days."
+- "Abridgly is a weekly email digest service. Users pick senders they care about, and we send a recap once a day, week, or custom days."
 - "On sign-in, we request the `gmail.readonly` scope. This is the minimum needed to read message contents from the senders the user adds."
 - "Inside the app, the user creates streams. Each stream has its own senders, schedule, and delivery email. They can mix and match — different streams for different topics."
 - "We only read mail from senders the user adds, within a window they pick. We never send mail, modify mail, or read mail from senders they haven't added."
-- "Every email we process is shown in 'What did the AI read?' so users can verify exactly what Briefly accessed. Users can delete individual emails from this record."
+- "Every email we process is shown in 'What did the AI read?' so users can verify exactly what Abridgly accessed. Users can delete individual emails from this record."
 - "Users can export everything we have on them, or delete their account entirely, from the Account section."
 
 ---
@@ -94,7 +94,7 @@ Voiceover script outline (read aloud during recording):
 
 No. When a user:
 - Clicks "Delete my account" in the dashboard → all their rows are wiped within 24 hours.
-- Revokes Briefly's access at myaccount.google.com/permissions → their Gmail tokens become invalid immediately; we cannot fetch new mail. Their existing data in our database persists until they also delete their account.
+- Revokes Abridgly's access at myaccount.google.com/permissions → their Gmail tokens become invalid immediately; we cannot fetch new mail. Their existing data in our database persists until they also delete their account.
 
 We are happy to add automatic data deletion on revocation if Google requires it.
 
@@ -108,9 +108,9 @@ We will upload a 120x120 PNG logo on the OAuth consent screen branding page.
 
 ## Restricted scope justification (specifically for gmail.readonly)
 
-Briefly's entire value proposition is reading the user's email to summarize it. We cannot provide the service without `gmail.readonly`. We use the narrowest read-only scope available; we do not request `gmail.modify`, `gmail.compose`, `gmail.send`, or `gmail.labels` because we don't need to write to the user's mailbox.
+Abridgly's entire value proposition is reading the user's email to summarize it. We cannot provide the service without `gmail.readonly`. We use the narrowest read-only scope available; we do not request `gmail.modify`, `gmail.compose`, `gmail.send`, or `gmail.labels` because we don't need to write to the user's mailbox.
 
-Briefly is a "User Productivity" use case under Google's API Services User Data Policy.
+Abridgly is a "User Productivity" use case under Google's API Services User Data Policy.
 
 ---
 

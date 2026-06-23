@@ -25,7 +25,7 @@ Round 6:
 - Let users customize their email format (per-stream template). e.g. choose which buckets show, custom section names, length/voice toggle (terse vs friendly), include/exclude header preheader, etc.
 
 Round 7:
-- Auto-label scanned emails inside Gmail itself. After Briefly reads an inbox, apply a Gmail label (e.g. "Briefly/Action", "Briefly/Important", "Briefly/Ignore") to the actual Gmail messages so the user can see at a glance which ones were surfaced vs which were bundled as noise. Goal: less anxiety about missing things, makes Gmail itself less annoying. Needs gmail.modify scope (currently we use gmail.readonly), so this gates on Google OAuth verification.
+- Auto-label scanned emails inside Gmail itself. After Abridgly reads an inbox, apply a Gmail label (e.g. "Abridgly/Action", "Abridgly/Important", "Abridgly/Ignore") to the actual Gmail messages so the user can see at a glance which ones were surfaced vs which were bundled as noise. Goal: less anxiety about missing things, makes Gmail itself less annoying. Needs gmail.modify scope (currently we use gmail.readonly), so this gates on Google OAuth verification.
 
 Round 5 (signup blocker — high priority when ready):
 - New users get "doesn't comply with Google's OAuth 2.0 policy" when trying to sign in.

@@ -166,7 +166,7 @@ export default function PricingPage() {
         </div>
 
         <p className="max-w-xl mx-auto mt-10 text-center text-sm text-[var(--ink-mute)]">
-          Questions? Email <a href="mailto:jasparbbernstein@gmail.com" className="underline">jasparbbernstein@gmail.com</a>. Plans are early access pricing and may change before public launch.
+          Questions? Email <a href="mailto:jasparbbernstein@gmail.com" className="underline">jasparbbernstein@gmail.com</a>.
         </p>
       </section>
     </main>

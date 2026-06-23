@@ -197,7 +197,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
           </div>
 
           <p className="mt-4 text-xs text-[var(--ink-mute)]">
-            Free during early access. Read-only Gmail. Cancel in one click.
+            Free to start. 14-day Pro trial, no card. Read-only Gmail. Cancel in one click.
           </p>
         </div>
 
@@ -524,8 +524,8 @@ function Faq() {
       a: 'Every email Abridgly processed is listed in your dashboard. You can remove any one of them from our records with one click.',
     },
     {
-      q: 'How much will it cost?',
-      a: 'Free during early access. When we launch paid plans we will email you first, and the free tier will still let you watch a handful of senders.',
+      q: 'How much does it cost?',
+      a: 'Free forever for one stream, weekly delivery, up to 5 senders. Pro is $7/month for up to 5 streams, daily delivery, 25 senders per stream, and digests sent to any email. Pro starts with a 14-day free trial, no card required.',
     },
   ]
   return (

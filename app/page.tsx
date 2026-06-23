@@ -173,7 +173,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-12 gap-10 items-center">
         <div className="md:col-span-7">
           <p className="text-sm text-[var(--green-700)] font-medium mb-4">
-            For parents drowning in school email. (And anyone else who is too.)
+            Built for parents. Works for any inbox.
           </p>
           <h1 className="font-display text-[clamp(2.75rem,7vw,5.25rem)] leading-[0.95] tracking-tight text-balance">
             Your week of email,
@@ -181,7 +181,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
             <em className="text-[var(--green-700)]">summed up</em> for you.
           </h1>
           <p className="mt-6 text-lg text-[var(--ink)] max-w-md text-pretty">
-            Permission slips, due dates, dollar amounts. We read the emails you don&apos;t have time for and send back one short digest. Works for work, packages, and newsletters too.
+            Drowning in school email? We pull the permission slips, due dates, and payments into one short recap. Works the same for work, bills, packages, and newsletters.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">

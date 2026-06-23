@@ -26,7 +26,7 @@ button returns a 500 error.
 ## 4. Set up the webhook
 
 - Stripe dashboard → **Developers → Webhooks → Add endpoint**
-- Endpoint URL: `https://YOUR_DOMAIN/api/stripe/webhook` (or your `briefly-gamma-red.vercel.app` URL for testing)
+- Endpoint URL: `https://YOUR_DOMAIN/api/stripe/webhook` (or your `abridgly.com` URL for testing)
 - Events to send:
   - `checkout.session.completed`
   - `customer.subscription.created`

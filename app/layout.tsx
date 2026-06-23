@@ -17,7 +17,7 @@ const fraunces = Fraunces({
   display: "swap",
 })
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://briefly-gamma-red.vercel.app'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://abridgly.com'
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),

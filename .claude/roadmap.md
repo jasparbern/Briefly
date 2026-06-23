@@ -65,7 +65,7 @@ Source: `.claude/feedback-parking-lot.md` (3 rounds of user feedback) + outstand
 *Why does the sign-in flow look "sus" to first-time users.*
 
 - **Google OAuth verification** — submit the app to Google's review process. Lifts the 100-test-user cap and removes "this app isn't verified" warning. Free, takes 2-6 weeks.
-- **Custom domain** — once we own `briefly.app` (or similar), the OAuth URL shows that instead of `briefly-gamma-red.vercel.app`. Cleaner trust signal.
+- **Custom domain** — once we own `briefly.app` (or similar), the OAuth URL shows that instead of `abridgly.com`. Cleaner trust signal.
 - **Email sender domain verification** in Resend → digests stop landing in Spam, from address becomes `digest@yourdomain.com`.
 - **Privacy policy** page (`/privacy`) — required by Google for OAuth verification.
 - **Terms of service** page (`/terms`).

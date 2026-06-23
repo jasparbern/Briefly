@@ -77,6 +77,22 @@ export async function POST(request: Request) {
     }
 
     const service = getServiceClient()
+
+    // Rate limit manual "send now" so a user can't run up Anthropic + Resend cost
+    // by clicking the button repeatedly. Cap: 5 sends in the past hour per user.
+    const hourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    const { count } = await service
+      .from('digests')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id)
+      .gte('created_at', hourAgo)
+    if ((count ?? 0) >= 5) {
+      return NextResponse.json(
+        { error: 'You\'ve sent 5 digests in the past hour. Wait a bit before sending again.' },
+        { status: 429 }
+      )
+    }
+
     let q = service.from('streams').select('*').eq('user_id', user.id).eq('paused', false)
     if (streamId) q = q.eq('id', streamId)
     const { data } = await q

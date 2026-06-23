@@ -34,12 +34,20 @@ ${convertToHtml(digest.body)}
 </body>
 </html>`
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://abridgly.com'
+
   await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to,
     subject: digest.subject,
     html,
     text: `${digest.subject}\n\n${digest.body}`,
+    headers: {
+      // Gmail / Outlook show a native "Unsubscribe" link when these headers are
+      // present. Improves deliverability + reduces spam reports.
+      'List-Unsubscribe': `<${appUrl}/dashboard>, <mailto:jasparbbernstein@gmail.com?subject=Unsubscribe>`,
+      'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+    },
   })
 }
 

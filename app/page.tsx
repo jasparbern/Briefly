@@ -81,6 +81,7 @@ export default function Home() {
         </div>
       )}
       <Hero onSignIn={handleCta} loading={loading} signedIn={signedIn} />
+      <AbridgeStrip />
       <BeforeAfter />
       <Sample />
       <Streams />
@@ -172,7 +173,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-12 gap-10 items-center">
         <div className="md:col-span-7">
           <p className="text-sm text-[var(--green-700)] font-medium mb-4">
-            School. Work. Packages. Hobbies. Anything in your inbox.
+            For parents drowning in school email. (And anyone else who is too.)
           </p>
           <h1 className="font-display text-[clamp(2.75rem,7vw,5.25rem)] leading-[0.95] tracking-tight text-balance">
             Your week of email,
@@ -180,7 +181,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
             <em className="text-[var(--green-700)]">summed up</em> for you.
           </h1>
           <p className="mt-6 text-lg text-[var(--ink)] max-w-md text-pretty">
-            We read the emails you don&apos;t have time for, and turn them into one simple digest delivered on your schedule.
+            Permission slips, due dates, dollar amounts. We read the emails you don&apos;t have time for and send back one short digest. Works for work, packages, and newsletters too.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -196,21 +197,54 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
             <a href="#sample" className="btn btn-ghost text-base">See a real digest</a>
           </div>
 
-          <p className="mt-4 text-xs text-[var(--ink-mute)]">
-            Free to start. 14-day Pro trial, no card. Read-only Gmail. Cancel in one click.
+          {/* Trust row — the Gmail-access objection answered up front, not in fine print */}
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--ink-soft)]">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-[var(--green-600)]" aria-hidden="true"><I.shield/></span>
+              Read-only. We can&apos;t send or delete mail.
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-[var(--green-600)]" aria-hidden="true"><I.check/></span>
+              Never sold. Never trains AI.
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-[var(--green-600)]" aria-hidden="true"><I.check/></span>
+              Delete everything in one click.
+            </span>
+          </div>
+          <p className="mt-3 text-xs text-[var(--ink-mute)]">
+            Free for one digest a week. Pro adds more, free for 14 days, no card.
           </p>
         </div>
 
         <div className="md:col-span-5 relative">
           <PeekingDigest />
-          {/* Small sticky note — three thoughts the reader's already had */}
-          <div className="sticky-note absolute -bottom-14 -left-6 md:-left-12 rotate-[-4deg] w-52 p-3 rounded-md font-display italic text-[13px] leading-snug select-none">
-            <span className="block">&ldquo;who has time for this&rdquo;</span>
-            <span className="block mt-1">&ldquo;i&apos;m never gonna finish these emails&rdquo;</span>
-            <span className="block mt-1">&ldquo;i ain&apos;t reading allat&rdquo;</span>
-            <span className="block not-italic text-[11px] font-sans mt-2 text-[#7a5d24]">cool. we got it.</span>
+          {/* One sticky note — the reader's own thought, said back to them */}
+          <div className="sticky-note absolute -bottom-10 -right-2 md:-right-6 rotate-[3deg] w-44 p-3 rounded-md font-display italic text-[13px] leading-snug select-none">
+            <span className="block">&ldquo;i&apos;m never gonna finish these.&rdquo;</span>
+            <span className="block not-italic text-[11px] font-sans mt-2 text-[#7a5d24]">you don&apos;t have to. we read them.</span>
           </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Abridge definition — explains the name right after the hero
+ * ─────────────────────────────────────────────────────────────────────── */
+function AbridgeStrip() {
+  return (
+    <section className="px-6 pb-4 -mt-6">
+      <div className="reveal max-w-3xl mx-auto bg-[var(--bg-soft)] border-l-4 border-[var(--green-600)] rounded-r-xl px-6 py-5">
+        <div className="flex items-baseline gap-3 flex-wrap">
+          <span className="font-display text-2xl">abridge</span>
+          <span className="text-sm text-[var(--ink-mute)] tnum">/əˈbrɪdʒ/</span>
+          <span className="text-sm italic text-[var(--ink-soft)]">verb</span>
+        </div>
+        <p className="mt-2 text-[var(--ink)] text-pretty">
+          to shorten a text without losing its meaning. We do this for your inbox.
+        </p>
       </div>
     </section>
   )
@@ -531,21 +565,6 @@ function Faq() {
   return (
     <section id="faq" className="py-16 px-6 bg-white">
       <div className="max-w-3xl mx-auto">
-
-        {/* Brand origin — dictionary entry */}
-        <aside className="reveal mb-12 bg-[var(--bg-soft)] border-l-4 border-[var(--green-600)] rounded-r-xl px-6 py-5">
-          <div className="flex items-baseline gap-3 flex-wrap">
-            <span className="font-display text-2xl">abridge</span>
-            <span className="text-sm text-[var(--ink-mute)] tnum">/əˈbrɪdʒ/</span>
-            <span className="text-sm italic text-[var(--ink-soft)]">verb</span>
-          </div>
-          <p className="mt-2 text-[var(--ink)] text-pretty">
-            to shorten a text without losing its meaning.
-          </p>
-          <p className="mt-2 text-sm text-[var(--ink-soft)]">
-            We do this for your inbox.
-          </p>
-        </aside>
 
         <div className="reveal mb-8">
           <h2 className="font-display text-4xl md:text-5xl text-balance">

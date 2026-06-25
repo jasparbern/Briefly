@@ -180,8 +180,8 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
             <br />
             <em className="text-[var(--green-700)]">summed up</em> for you.
           </h1>
-          <p className="mt-6 text-lg text-[var(--ink)] max-w-md text-pretty">
-            Drowning in school email? We pull the permission slips, due dates, and payments into one short recap. Works the same for work, bills, packages, and newsletters.
+          <p className="mt-6 text-lg text-[var(--ink)] max-w-lg text-pretty">
+            We go through your inbox, pull out the action items, deadlines, and other things that matter, and send it back as one short email at the time you choose. Built for parents drowning in school email. Works the same for work, bills, packages, and newsletters.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -338,7 +338,7 @@ function BeforeAfter() {
             <em className="text-[var(--green-700)]">One</em> worth reading.
           </h2>
           <p className="mt-5 text-[var(--ink)] text-pretty">
-            The example below is a school inbox. Works the same for work, newsletters, packages, anything.
+            We read all of it, keep the few emails that need you, and leave the rest out. Below is a real digest from a school inbox.
           </p>
         </div>
 
@@ -385,10 +385,10 @@ function Sample() {
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div className="reveal">
           <h2 className="font-display text-4xl md:text-5xl leading-[1.05] text-balance">
-            What lands in your inbox <em className="text-[var(--green-700)]">Sunday morning</em>.
+            This is the email <em className="text-[var(--green-700)]">you get</em>.
           </h2>
           <p className="mt-5 text-[var(--ink)] text-pretty">
-            Short bullets. Bold dates. The dollar amounts. No filler.
+            We sort everything into four groups so you know what needs you and what doesn&apos;t:
           </p>
           <ul className="mt-6 space-y-2.5 text-sm">
             {[
@@ -454,10 +454,10 @@ function Streams() {
       <div className="max-w-5xl mx-auto">
         <div className="reveal max-w-2xl">
           <h2 className="font-display text-4xl md:text-5xl leading-[1.05] text-balance">
-            One inbox. <em className="text-[var(--green-700)]">A digest for each thing.</em>
+            One inbox. <em className="text-[var(--green-700)]">A separate digest for each thing.</em>
           </h2>
           <p className="mt-4 text-[var(--ink)] text-pretty">
-            School on Sundays. Work daily. Packages in the morning. Each one a separate digest, on its own schedule.
+            Set up a stream for each thing you care about. You tell each one which senders or topics to watch and when to send. They never mix together.
           </p>
         </div>
 
@@ -501,9 +501,9 @@ function StreamCard({ name, cadence, senders }: { name: string; cadence: string;
  * ─────────────────────────────────────────────────────────────────────── */
 function How() {
   const steps = [
-    { icon: <I.shield/>, title: 'Sign in with Google', body: 'Read-only access. We can\'t send, edit, or delete a thing.' },
-    { icon: <I.mail/>,   title: 'Pick what to watch', body: 'Paste a few senders, or describe what you want and we find them.' },
-    { icon: <I.cal/>,    title: 'Choose your day', body: 'Daily, weekly, or specific days. One email lands when you want it.' },
+    { icon: <I.shield/>, title: 'Connect your Gmail', body: 'Sign in with Google. We get read-only access, so we can read your mail but can\'t send, change, or delete anything.' },
+    { icon: <I.mail/>,   title: 'Tell us what to watch', body: 'List the senders you care about, or describe a topic and we find the matching emails for you.' },
+    { icon: <I.cal/>,    title: 'Pick when to get it', body: 'Daily, weekly, or set days. At that time we send one email with everything that matters.' },
   ]
   return (
     <section id="how" className="py-16 px-6 bg-[var(--bg-soft)] border-y border-[var(--line-soft)]">
@@ -601,8 +601,8 @@ function Pricing({ onSignIn, loading, signedIn }: { onSignIn: () => void; loadin
           <br />
           <em className="text-[var(--green-300)]">$7 when you want more.</em>
         </h2>
-        <p className="mt-5 text-white/70 max-w-md mx-auto">
-          Free covers one stream, weekly. Pro gives you 5 streams, daily delivery, and send-to-any-inbox. 14 days free first. No card.
+        <p className="mt-5 text-white/70 max-w-lg mx-auto">
+          Free gives you one digest a week. Pro is $7 a month: up to 5 separate digests, daily delivery, and the option to send them to any inbox. Pro is free for the first 14 days and we don&apos;t ask for a card to start.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">

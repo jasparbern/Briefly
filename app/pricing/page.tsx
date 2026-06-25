@@ -61,7 +61,7 @@ export default function PricingPage() {
             <em className="text-[var(--green-700)]">$7 if you want more.</em>
           </h1>
           <p className="mt-5 text-lg text-[var(--ink)] max-w-xl mx-auto">
-            Pro starts with 14 days free. No card to start. Cancel in one click.
+            Start on Free and get one digest a week. Upgrade to Pro for more digests and daily delivery. Pro is free for 14 days, no card needed, and you can cancel in one click.
           </p>
         </div>
       </section>
@@ -95,18 +95,18 @@ export default function PricingPage() {
           <article className="bg-white rounded-3xl border border-[var(--line)] p-7 flex flex-col">
             <div>
               <h2 className="font-display text-3xl">Free</h2>
-              <p className="mt-2 text-[var(--ink-soft)] text-sm">Get the feel.</p>
+              <p className="mt-2 text-[var(--ink-soft)] text-sm">One digest, once a week.</p>
             </div>
             <div className="mt-5 flex items-baseline gap-1">
               <span className="font-display text-5xl tnum">$0</span>
               <span className="text-[var(--ink-mute)] text-sm">/forever</span>
             </div>
             <ul className="mt-6 space-y-2.5 text-sm text-[var(--ink)] flex-1">
-              <Tick>1 stream</Tick>
-              <Tick>Up to 5 senders</Tick>
-              <Tick>Weekly delivery</Tick>
-              <Tick>Read-only Gmail</Tick>
-              <Tick>Delete in one click</Tick>
+              <Tick>One digest, sent once a week</Tick>
+              <Tick>Watch up to 5 senders</Tick>
+              <Tick>Read-only access to your Gmail</Tick>
+              <Tick>See every email we read</Tick>
+              <Tick>Delete your data in one click</Tick>
             </ul>
             <a
               href="/"
@@ -123,7 +123,7 @@ export default function PricingPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <h2 className="font-display text-3xl">Pro</h2>
-                  <p className="mt-2 text-white/70 text-sm">For actual life.</p>
+                  <p className="mt-2 text-white/70 text-sm">More digests, sent more often.</p>
                 </div>
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[var(--green-600)] text-white text-[10px] font-semibold uppercase tracking-wider">
                   {tier === 'pro' ? 'Current plan' : '14-day free trial'}
@@ -134,12 +134,12 @@ export default function PricingPage() {
                 <span className="text-white/60 text-sm">/month</span>
               </div>
               <ul className="mt-6 space-y-2.5 text-sm flex-1">
-                <Tick dark>Up to 5 streams</Tick>
-                <Tick dark>25 senders per stream</Tick>
-                <Tick dark>Daily, weekly, custom days</Tick>
-                <Tick dark>Send digests to any email</Tick>
-                <Tick dark>AI topic-mode filtering</Tick>
-                <Tick dark>Email format customization (soon)</Tick>
+                <Tick dark>Up to 5 separate digests</Tick>
+                <Tick dark>Watch 25 senders in each</Tick>
+                <Tick dark>Send daily, weekly, or on set days</Tick>
+                <Tick dark>Send any digest to any inbox</Tick>
+                <Tick dark>Find emails by topic, not just sender</Tick>
+                <Tick dark>Customize the email layout (soon)</Tick>
               </ul>
               {tier === 'pro' ? (
                 <a

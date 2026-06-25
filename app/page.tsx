@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { BrandLogo } from './brand-logo'
 
 const previewMode =
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -93,18 +94,6 @@ export default function Home() {
   )
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
- * Brand mark
- * ─────────────────────────────────────────────────────────────────────── */
-function Wordmark({ size = 'sm' }: { size?: 'sm' | 'lg' }) {
-  const cls = size === 'sm' ? 'text-[17px]' : 'text-3xl'
-  return (
-    <span className={`wordmark font-semibold tracking-tight ${cls}`}>
-      Abr<span className="dot" aria-hidden="true" />dgly
-    </span>
-  )
-}
-
 /* Inline icons (consistent stroke, single accent) */
 const I = {
   mail: (p: React.SVGProps<SVGSVGElement>) => (
@@ -141,7 +130,7 @@ function NavBar({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading
   return (
     <header className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b border-[var(--line-soft)]">
       <nav className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        <a href="/" className="flex items-center"><Wordmark /></a>
+        <BrandLogo />
         <div className="flex items-center gap-1 text-sm">
           <a href="#sample" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Sample</a>
           <a href="#how" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">How it works</a>
@@ -633,7 +622,7 @@ function Footer() {
     <footer className="py-10 px-6 border-t border-[var(--line-soft)]">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[var(--ink-soft)]">
         <div className="flex items-center gap-3">
-          <Wordmark />
+          <BrandLogo />
           <span className="tnum text-[var(--ink-mute)]">© {new Date().getFullYear()}</span>
         </div>
         <div className="flex items-center gap-5">

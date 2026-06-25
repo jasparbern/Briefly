@@ -20,10 +20,16 @@ export default async function Image() {
           color: '#0c1f17',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, fontSize: 36, fontWeight: 600, letterSpacing: '-0.02em' }}>
-          <span>Abr</span>
-          <span style={{ width: 12, height: 12, background: '#059669', borderRadius: 999, marginTop: -22 }} />
-          <span>dgly</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <svg width="64" height="64" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="40" stroke="#10241b" strokeWidth="6" />
+            <line x1="50" y1="12" x2="50" y2="19" stroke="#10241b" strokeWidth="5" strokeLinecap="round" />
+            <line x1="88" y1="50" x2="81" y2="50" stroke="#10241b" strokeWidth="5" strokeLinecap="round" />
+            <line x1="50" y1="88" x2="50" y2="81" stroke="#10241b" strokeWidth="5" strokeLinecap="round" />
+            <line x1="12" y1="50" x2="19" y2="50" stroke="#10241b" strokeWidth="5" strokeLinecap="round" />
+            <path d="M32 74 L50 42 L68 74 M39 62 L61 62" stroke="#047857" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span style={{ fontSize: 40, fontWeight: 600, letterSpacing: '-0.02em', color: '#047857' }}>bridgly</span>
         </div>
 
         <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 24 }}>

@@ -1,3 +1,5 @@
+import { BrandLogo } from '../brand-logo'
+
 export const metadata = {
   title: 'Privacy Policy — Abridgly',
   description: 'How Abridgly handles your data.',
@@ -6,11 +8,11 @@ export const metadata = {
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-white">
-      <nav className="border-b border-gray-100 px-8 py-5">
-        <a href="/" className="text-lg font-bold text-gray-900 hover:opacity-80 transition-opacity">
-          📬 Abridgly
-        </a>
-      </nav>
+      <header className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b border-[var(--line-soft)]">
+        <nav className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <BrandLogo />
+        </nav>
+      </header>
 
       <article className="max-w-2xl mx-auto px-6 py-12 prose prose-sm prose-gray">
         <h1 className="text-3xl font-bold mb-2">Privacy Policy</h1>

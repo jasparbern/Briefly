@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { BrandLogo } from '../brand-logo'
 
 export default function PricingPage() {
   const [loading, setLoading] = useState(false)
@@ -47,11 +48,11 @@ export default function PricingPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <nav className="border-b border-[var(--line-soft)] px-6 py-4">
-        <a href="/" className="font-semibold tracking-tight text-[15px]">
-          <span className="wordmark">Br<span className="dot" aria-hidden="true"/>efly</span>
-        </a>
-      </nav>
+      <header className="sticky top-0 z-30 backdrop-blur bg-white/80 border-b border-[var(--line-soft)]">
+        <nav className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+          <BrandLogo />
+        </nav>
+      </header>
 
       <section className="px-6 pt-16 pb-10">
         <div className="max-w-3xl mx-auto text-center">

@@ -1,6 +1,7 @@
 import { google } from 'googleapis'
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { encrypt } from '@/lib/crypto'
 
 function getOAuthClient() {
   return new google.auth.OAuth2(
@@ -28,10 +29,11 @@ export async function GET(request: Request) {
   const oauth2Client = getOAuthClient()
   const { tokens } = await oauth2Client.getToken(code)
 
+  // Encrypt tokens at rest (AES-256-GCM). Never store them as plaintext.
   await supabase.from('gmail_tokens').upsert({
     user_id: user.id,
-    access_token: tokens.access_token!,
-    refresh_token: tokens.refresh_token!,
+    access_token: encrypt(tokens.access_token!),
+    refresh_token: encrypt(tokens.refresh_token!),
     expiry_date: tokens.expiry_date,
   })
 

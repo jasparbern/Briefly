@@ -1,6 +1,7 @@
 import { google } from 'googleapis'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { filterByTopic, topicToGmailQueries, type EmailMetadata } from './ai'
+import { encrypt, decrypt } from './crypto'
 
 function getServiceClient() {
   return createServiceClient(
@@ -58,8 +59,8 @@ export async function fetchEmailsForStream(
 
   const oauth2Client = getOAuthClient()
   oauth2Client.setCredentials({
-    access_token: tokenRow.access_token,
-    refresh_token: tokenRow.refresh_token,
+    access_token: decrypt(tokenRow.access_token),
+    refresh_token: decrypt(tokenRow.refresh_token),
     expiry_date: tokenRow.expiry_date,
   })
 
@@ -68,7 +69,7 @@ export async function fetchEmailsForStream(
       await supabase
         .from('gmail_tokens')
         .update({
-          access_token: tokens.access_token,
+          access_token: encrypt(tokens.access_token),
           expiry_date: tokens.expiry_date,
         })
         .eq('user_id', userId)

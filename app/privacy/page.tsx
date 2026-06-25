@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <h2 className="text-xl font-semibold mt-10 mb-3">What we collect</h2>
         <ul className="list-disc pl-6 space-y-2">
           <li>Your Google account email and basic profile (name, profile picture) so we can sign you in.</li>
-          <li>A Gmail access token so we can read messages on your behalf. We store this encrypted at rest.</li>
+          <li>A Gmail access token so we can read messages on your behalf. We encrypt it with AES-256-GCM before storing it, and it never leaves our server.</li>
           <li>The senders you ask us to watch, plus any instructions you write for each.</li>
           <li>Your schedule choices (cadence, day, lookback window, delivery email).</li>
           <li>The actual emails Abridgly processed for each digest (sender, subject, snippet, received date). You can delete any one of these from your dashboard.</li>

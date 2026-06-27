@@ -194,11 +194,11 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="text-[var(--green-600)]" aria-hidden="true"><I.check/></span>
-              Never sold. Never trains AI.
+              We never store your emails.
             </span>
             <span className="inline-flex items-center gap-1.5">
               <span className="text-[var(--green-600)]" aria-hidden="true"><I.check/></span>
-              Delete everything in one click.
+              Never sold. Never trains AI.
             </span>
           </div>
           <p className="mt-3 text-xs text-[var(--ink-mute)]">
@@ -540,11 +540,11 @@ function Faq() {
     },
     {
       q: 'What does Abridgly do with my email?',
-      a: 'Reads it, summarizes it, forgets it. No selling, no training AI, no ads. Delete your account and your data is gone within 24 hours.',
+      a: 'Reads it in memory, writes your digest, then discards it. We never store your emails. No selling, no training AI, no ads.',
     },
     {
-      q: 'Can I see what was read?',
-      a: 'Your dashboard lists every email Abridgly processed. Remove any one with a click.',
+      q: 'Do you keep my emails?',
+      a: 'No. We read them only to build your digest and discard them the second it sends. We save your settings and the digests themselves, nothing more.',
     },
     {
       q: 'How much does it cost?',

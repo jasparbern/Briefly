@@ -29,8 +29,8 @@ export default function PrivacyPage() {
           <li>A Gmail access token so we can read messages on your behalf. We encrypt it with AES-256-GCM before storing it, and it never leaves our server.</li>
           <li>The senders you ask us to watch, plus any instructions you write for each.</li>
           <li>Your schedule choices (cadence, day, lookback window, delivery email).</li>
-          <li>The actual emails Abridgly processed for each digest (sender, subject, snippet, received date). You can delete any one of these from your dashboard.</li>
-          <li>The digests we generated and sent you.</li>
+          <li>We do not store the emails we read. We process them in memory to build your digest and discard them the moment the digest is sent. We never save the sender, subject, body, or a preview of your source emails.</li>
+          <li>The digests we generated and sent you (the recap itself). You can erase these by deleting your account.</li>
           <li>If you subscribe to Pro: your Stripe customer ID, subscription status, and trial/renewal dates. Abridgly never sees your card number — Stripe handles all payment data.</li>
         </ul>
 
@@ -39,7 +39,7 @@ export default function PrivacyPage() {
           <li>Pull emails matching your watched senders from Gmail.</li>
           <li>Send the contents to our AI provider (Anthropic) to generate the digest.</li>
           <li>Send the digest to your delivery email through our email provider (Resend).</li>
-          <li>Store everything above so you can see what we did and adjust your settings.</li>
+          <li>Discard the source emails from memory as soon as the digest is sent. We keep only your settings and the digests themselves.</li>
         </ul>
         <p className="mt-4">
           We do not sell your data. We do not use your data to train AI models. We do not show ads based on your email.
@@ -65,10 +65,9 @@ export default function PrivacyPage() {
 
         <h2 className="text-xl font-semibold mt-10 mb-3">Your controls</h2>
         <ul className="list-disc pl-6 space-y-2">
-          <li><strong>See what we read</strong> — every email Abridgly processed is viewable in your dashboard.</li>
-          <li><strong>Delete one email</strong> — remove any single processed email from our records.</li>
+          <li><strong>Nothing to clean up</strong> — we don&apos;t keep your source emails, so there&apos;s no stored mail to manage. Only your settings and past digests are saved.</li>
           <li><strong>Export everything</strong> — download a JSON file with all your data from the account section of the dashboard.</li>
-          <li><strong>Delete your account</strong> — wipes your senders, schedules, digests, processed emails, and Gmail tokens within 24 hours. Email backups roll off within 30 days.</li>
+          <li><strong>Delete your account</strong> — wipes your senders, schedules, digests, and Gmail tokens within 24 hours. Email backups roll off within 30 days.</li>
           <li><strong>Revoke Gmail access</strong> — visit <a href="https://myaccount.google.com/permissions" className="text-blue-600 hover:underline">myaccount.google.com/permissions</a> and remove Abridgly. Your saved Gmail token becomes useless.</li>
         </ul>
 

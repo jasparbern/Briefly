@@ -106,8 +106,8 @@ export default function PricingPage() {
               <Tick>One digest, sent once a week</Tick>
               <Tick>Watch up to 5 senders</Tick>
               <Tick>Read-only access to your Gmail</Tick>
-              <Tick>See every email we read</Tick>
-              <Tick>Delete your data in one click</Tick>
+              <Tick>We never store your emails</Tick>
+              <Tick>Delete your account in one click</Tick>
             </ul>
             <a
               href="/"

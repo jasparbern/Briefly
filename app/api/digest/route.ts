@@ -159,29 +159,13 @@ async function processStream(stream: StreamRow) {
 
   await sendDigestEmail(deliveryEmail, { subject, body: digest.body })
 
-  const { data: digestRow } = await supabase
-    .from('digests')
-    .insert({
-      user_id: stream.user_id,
-      stream_id: stream.id,
-      content: `SUBJECT: ${subject}\n\n${digest.body}`,
-    })
-    .select('id')
-    .single()
-
-  if (digestRow && emails.length > 0) {
-    await supabase.from('digest_emails').upsert(
-      emails.map((e) => ({
-        user_id: stream.user_id,
-        stream_id: stream.id,
-        digest_id: digestRow.id,
-        gmail_message_id: e.gmailMessageId,
-        sender: e.rawFrom,
-        subject: e.subject,
-        snippet: e.snippet,
-        received_at: e.receivedAt?.toISOString() ?? null,
-      })),
-      { onConflict: 'user_id,gmail_message_id' }
-    )
-  }
+  // Store ONLY the digest we generated and sent. The source emails are read in
+  // memory to build the digest and discarded the moment this function returns —
+  // we never persist their sender, subject, snippet, or body. Maximal data
+  // minimization for privacy + Google CASA.
+  await supabase.from('digests').insert({
+    user_id: stream.user_id,
+    stream_id: stream.id,
+    content: `SUBJECT: ${subject}\n\n${digest.body}`,
+  })
 }

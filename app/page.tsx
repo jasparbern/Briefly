@@ -174,20 +174,6 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
             We read your inbox and send back one short email.
           </p>
 
-          <ul className="mt-6 space-y-2.5 text-[15px] text-[var(--ink-soft)] max-w-md">
-            {[
-              'Reads every email from the senders and topics you pick',
-              'Pulls out the deadlines, payments, forms, and changes',
-              'Sorts it into 🔴 do, 🟡 know, 🟢 optional, and ⚪ skip',
-              'Sends one short email — daily, weekly, or on your days',
-            ].map((t) => (
-              <li key={t} className="flex items-start gap-2.5">
-                <span className="text-[var(--green-600)] mt-0.5 shrink-0" aria-hidden="true"><I.check/></span>
-                <span>{t}</span>
-              </li>
-            ))}
-          </ul>
-
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <button
               type="button"
@@ -369,18 +355,18 @@ function Sample() {
             This is the email <em className="text-[var(--green-700)]">you get</em>.
           </h2>
           <p className="mt-5 text-[var(--ink)] text-pretty">
-            Everything is sorted into four groups, so you know what needs you and what doesn&apos;t:
+            Here&apos;s exactly what happens to your inbox:
           </p>
-          <ul className="mt-6 space-y-2.5 text-sm">
+          <ul className="mt-6 space-y-3 text-[15px] text-[var(--ink)]">
             {[
-              ['🔴', 'Things you have to do'],
-              ['🟡', 'Worth knowing, no action needed'],
-              ['🟢', 'Optional — deals, drops, signups'],
-              ['⚪', 'Noise, grouped and skippable'],
-            ].map(([e, t]) => (
-              <li key={t} className="flex items-start gap-3">
-                <span aria-hidden="true" className="text-base leading-6">{e}</span>
-                <span className="text-[var(--ink-soft)]">{t}</span>
+              'Reads every email from the senders and topics you pick',
+              'Pulls out the deadlines, payments, forms, and changes',
+              'Sorts it into 🔴 do, 🟡 know, 🟢 optional, and ⚪ skip',
+              'Sends one short email — daily, weekly, or on your days',
+            ].map((t) => (
+              <li key={t} className="flex items-start gap-2.5">
+                <span className="text-[var(--green-600)] mt-0.5 shrink-0" aria-hidden="true"><I.check/></span>
+                <span>{t}</span>
               </li>
             ))}
           </ul>

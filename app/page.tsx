@@ -85,12 +85,12 @@ export default function Home() {
       {/* 1. SHOW what it does */}
       <Hero onSignIn={handleCta} loading={loading} signedIn={signedIn} />
 
-      {/* 2. BRIEFLY explain how + what */}
-      <How />
-
-      {/* 3. FEATURES */}
+      {/* 2. FEATURES */}
       <Sample />
       <Streams />
+
+      {/* 3. HOW — moved below the streams section */}
+      <How />
 
       <Pricing onSignIn={handleCta} loading={loading} signedIn={signedIn} />
       <Faq />
@@ -164,14 +164,14 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
       <div aria-hidden="true" className="absolute inset-0 -z-10 dot-grid opacity-50" />
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-12 gap-10 items-center">
-        <div className="md:col-span-6">
+        <div className="md:col-span-8">
           <h1 className="font-display text-[clamp(2.75rem,7vw,5rem)] leading-[0.95] tracking-tight text-balance">
             Your week of email,
             <br />
             <em className="text-[var(--green-700)]">summed up</em> for you.
           </h1>
-          <p className="mt-6 text-lg text-[var(--ink)] max-w-lg text-pretty">
-            We go through your inbox, pull out the action items, deadlines, and other things that matter, and send it back as one short email at the time you choose. Built for parents drowning in school email. Works the same for work, bills, packages, and newsletters.
+          <p className="mt-6 text-lg text-[var(--ink)] max-w-md text-pretty">
+            We read your inbox and send back one short email.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
@@ -200,7 +200,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
           </div>
         </div>
 
-        <div className="md:col-span-6">
+        <div className="md:col-span-4">
           <HeroDemo />
         </div>
       </div>
@@ -229,68 +229,57 @@ function HeroDemo() {
     'YEAR-END SHOW tickets are LIVE 🎭',
   ]
   return (
-    <div className="relative">
-      <div className="absolute inset-0 -z-10 blur-3xl opacity-60 bg-gradient-to-tr from-[var(--green-200)] via-[var(--green-100)] to-[var(--green-400)] rounded-[36px]" aria-hidden="true" />
-      <div className="grid grid-cols-5 gap-3 items-center">
+    <div className="max-w-xs mx-auto md:mr-0 md:ml-auto">
+      {/* The chaotic inbox, scrolling */}
+      <div className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg-soft)] shadow-sm">
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[var(--bg-soft)] to-transparent z-10" />
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-soft)] to-transparent z-10" />
+        <ul className="vscroll-track py-3 px-4 space-y-1.5 text-[12px] leading-tight text-[var(--ink-soft)]">
+          {[...subjects, ...subjects].map((s, i) => (
+            <li key={i} className="flex items-start gap-2 py-1 border-b border-dashed border-[var(--line-soft)]">
+              <span aria-hidden="true" className="text-[var(--ink-mute)] mt-0.5 shrink-0"><I.mail/></span>
+              <span className="truncate">{s}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        {/* LEFT: the chaotic inbox, scrolling */}
-        <div className="col-span-2 min-w-0">
-          <p className="text-[10px] uppercase tracking-widest text-[var(--ink-mute)] mb-1.5 text-center">Your inbox</p>
-          <div className="relative h-[300px] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg-soft)]">
-            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[var(--bg-soft)] to-transparent z-10" />
-            <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-soft)] to-transparent z-10" />
-            <ul className="vscroll-track py-3 px-3 space-y-1.5 text-[11px] leading-tight text-[var(--ink-soft)]">
-              {[...subjects, ...subjects].map((s, i) => (
-                <li key={i} className="flex items-start gap-1.5 py-1 border-b border-dashed border-[var(--line-soft)]">
-                  <span aria-hidden="true" className="text-[var(--ink-mute)] mt-0.5 shrink-0"><I.mail/></span>
-                  <span className="truncate">{s}</span>
-                </li>
-              ))}
+      {/* Down arrow */}
+      <div className="flex justify-center py-2.5 text-[var(--green-600)]">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 5v14M6 13l6 6 6-6"/>
+        </svg>
+      </div>
+
+      {/* The one clean email */}
+      <article className="bg-white rounded-2xl border border-[var(--green-300)] shadow-[0_24px_50px_-28px_rgba(5,150,105,0.45)] overflow-hidden">
+        <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-[var(--line-soft)] text-[11px] text-[var(--ink-mute)] tnum">
+          <span className="w-2 h-2 rounded-full bg-[#fb7185]" />
+          <span className="w-2 h-2 rounded-full bg-[#fbbf24]" />
+          <span className="w-2 h-2 rounded-full bg-[var(--green-400)]" />
+          <span className="ml-1.5 truncate">Sun · 9:00 am</span>
+        </div>
+        <div className="p-4 space-y-3 text-left">
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-red">🔴 Action</span>
+            <ul className="mt-1.5 space-y-1 text-[13px] text-[var(--ink)] leading-snug">
+              <li>Field trip slip <strong>+$14</strong> by Thu</li>
+              <li>Picture day reorder <strong>Mar 28</strong></li>
             </ul>
           </div>
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-amber">🟡 Important</span>
+            <ul className="mt-1.5 space-y-1 text-[13px] text-[var(--ink)] leading-snug">
+              <li>PTA Tue <strong>7 pm</strong></li>
+              <li>Bus 217 reroute Mon</li>
+            </ul>
+          </div>
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-mute">⚪ Ignored</span>
+            <p className="mt-1.5 text-[13px] text-[var(--ink-soft)] leading-snug">12 reply-all + promo blasts, grouped</p>
+          </div>
         </div>
-
-        {/* MIDDLE: the transform arrow */}
-        <div className="col-span-1 flex flex-col items-center justify-center gap-1 text-[var(--green-600)]">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--green-700)]">Abridgly</span>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M5 12h14M13 6l6 6-6 6"/>
-          </svg>
-        </div>
-
-        {/* RIGHT: the one clean email */}
-        <div className="col-span-2 min-w-0">
-          <p className="text-[10px] uppercase tracking-widest text-[var(--ink-mute)] mb-1.5 text-center">Your email</p>
-          <article className="bg-white rounded-2xl border border-[var(--green-300)] shadow-[0_24px_50px_-28px_rgba(5,150,105,0.45)] overflow-hidden">
-            <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--line-soft)] text-[10px] text-[var(--ink-mute)] tnum">
-              <span className="w-2 h-2 rounded-full bg-[#fb7185]" />
-              <span className="w-2 h-2 rounded-full bg-[#fbbf24]" />
-              <span className="w-2 h-2 rounded-full bg-[var(--green-400)]" />
-              <span className="ml-1.5 truncate">Sun · 9:00 am</span>
-            </div>
-            <div className="p-3.5 space-y-3 text-left">
-              <div>
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-red">🔴 Action</span>
-                <ul className="mt-1.5 space-y-1 text-[12px] text-[var(--ink)] leading-snug">
-                  <li>Field trip slip <strong>+$14</strong> by Thu</li>
-                  <li>Picture day reorder <strong>Mar 28</strong></li>
-                </ul>
-              </div>
-              <div>
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-amber">🟡 Important</span>
-                <ul className="mt-1.5 space-y-1 text-[12px] text-[var(--ink)] leading-snug">
-                  <li>PTA Tue <strong>7 pm</strong></li>
-                  <li>Bus 217 reroute Mon</li>
-                </ul>
-              </div>
-              <div>
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-mute">⚪ Ignored</span>
-                <p className="mt-1.5 text-[12px] text-[var(--ink-soft)] leading-snug">12 reply-all + promo blasts, grouped</p>
-              </div>
-            </div>
-          </article>
-        </div>
-      </div>
+      </article>
     </div>
   )
 }
@@ -525,35 +514,81 @@ function Faq() {
  * ─────────────────────────────────────────────────────────────────────── */
 function Pricing({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: boolean; signedIn: boolean }) {
   return (
-    <section id="pricing" className="relative py-20 px-6 bg-[var(--bg-deep)] text-white overflow-hidden">
-      <div aria-hidden="true" className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-[var(--green-600)] opacity-25 rounded-full blur-3xl" />
-      <div className="relative max-w-3xl mx-auto text-center reveal">
-        <h2 className="font-display text-5xl md:text-6xl text-balance">
-          Free forever.
-          <br />
-          <em className="text-[var(--green-300)]">$7 when you want more.</em>
-        </h2>
-        <p className="mt-5 text-white/70 max-w-md mx-auto">
-          Free gets you one digest a week. Pro adds more digests and daily delivery — free for 14 days, no card.
-        </p>
-
-        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={onSignIn}
-            disabled={loading}
-            className="btn btn-green text-base"
-          >
-            <GoogleG />
-            {loading ? 'Signing in…' : signedIn ? 'Go to dashboard' : 'Start free with Google'}
-          </button>
-          <a href="/pricing" className="btn btn-ghost text-base text-white hover:text-white border border-white/20 hover:border-white/40">
-            See plans
-          </a>
+    <section id="pricing" className="py-20 px-6 bg-white border-t border-[var(--line-soft)]">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center reveal mb-10">
+          <h2 className="font-display text-4xl md:text-5xl text-balance">
+            Start free. <em className="text-[var(--green-700)]">Upgrade if you want more.</em>
+          </h2>
         </div>
-        <p className="mt-3 text-xs text-white/50">Cancel in one click.</p>
+
+        <div className="grid md:grid-cols-2 gap-5 max-w-3xl mx-auto reveal">
+          {/* Free */}
+          <article className="bg-white rounded-3xl border border-[var(--line)] p-7 flex flex-col">
+            <h3 className="font-display text-2xl">Free</h3>
+            <div className="mt-3 flex items-baseline gap-1">
+              <span className="font-display text-4xl tnum">$0</span>
+              <span className="text-[var(--ink-mute)] text-sm">/forever</span>
+            </div>
+            <ul className="mt-6 space-y-2.5 text-sm text-[var(--ink)] flex-1">
+              <Tick>One digest, once a week</Tick>
+              <Tick>Watch up to 5 senders</Tick>
+              <Tick>Read-only access to your Gmail</Tick>
+            </ul>
+            <button
+              type="button"
+              onClick={onSignIn}
+              disabled={loading}
+              className="mt-7 inline-flex justify-center items-center gap-2 rounded-xl border border-[var(--line)] text-[var(--ink)] font-semibold py-3 hover:border-[var(--green-300)] transition-colors disabled:opacity-60"
+            >
+              {loading ? 'Signing in…' : signedIn ? 'Go to dashboard' : 'Start free'}
+            </button>
+          </article>
+
+          {/* Pro */}
+          <article className="bg-[var(--bg-deep)] text-white rounded-3xl p-7 flex flex-col relative overflow-hidden">
+            <div aria-hidden="true" className="absolute -top-32 -right-32 w-[400px] h-[400px] bg-[var(--green-600)] opacity-30 rounded-full blur-3xl" />
+            <div className="relative flex flex-col flex-1">
+              <div className="flex items-start justify-between">
+                <h3 className="font-display text-2xl">Pro</h3>
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[var(--green-600)] text-white text-[10px] font-semibold uppercase tracking-wider">
+                  14-day free trial
+                </span>
+              </div>
+              <div className="mt-3 flex items-baseline gap-1">
+                <span className="font-display text-4xl tnum">$7</span>
+                <span className="text-white/60 text-sm">/month</span>
+              </div>
+              <ul className="mt-6 space-y-2.5 text-sm flex-1">
+                <Tick dark>Up to 5 separate digests</Tick>
+                <Tick dark>Watch 25 senders in each</Tick>
+                <Tick dark>Send daily, weekly, or on set days</Tick>
+                <Tick dark>Find emails by topic, not just sender</Tick>
+                <Tick dark>Send any digest to any inbox</Tick>
+              </ul>
+              <a
+                href="/pricing"
+                className="mt-7 inline-flex justify-center items-center gap-2 rounded-xl bg-[var(--green-600)] hover:bg-[var(--green-700)] text-white font-semibold py-3 transition-colors"
+              >
+                Start 14-day trial
+              </a>
+              <p className="mt-3 text-xs text-white/50 text-center">No card to start. Cancel in one click.</p>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
+  )
+}
+
+function Tick({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
+  return (
+    <li className="flex items-start gap-2">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={`mt-0.5 shrink-0 ${dark ? 'text-[var(--green-300)]' : 'text-[var(--green-600)]'}`} aria-hidden="true">
+        <path d="m4 12 5 5L20 6"/>
+      </svg>
+      <span className={dark ? 'text-white/90' : ''}>{children}</span>
+    </li>
   )
 }
 

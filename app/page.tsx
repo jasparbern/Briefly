@@ -164,7 +164,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
       <div aria-hidden="true" className="absolute inset-0 -z-10 dot-grid opacity-50" />
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-12 gap-10 items-center">
-        <div className="md:col-span-8">
+        <div className="md:col-span-5">
           <h1 className="font-display text-[clamp(2.75rem,7vw,5rem)] leading-[0.95] tracking-tight text-balance">
             Your week of email,
             <br />
@@ -200,7 +200,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
           </div>
         </div>
 
-        <div className="md:col-span-4">
+        <div className="md:col-span-7">
           <HeroDemo />
         </div>
       </div>
@@ -229,57 +229,56 @@ function HeroDemo() {
     'YEAR-END SHOW tickets are LIVE 🎭',
   ]
   return (
-    <div className="max-w-xs mx-auto md:mr-0 md:ml-auto">
-      {/* The chaotic inbox, scrolling */}
-      <div className="relative h-[260px] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg-soft)] shadow-sm">
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[var(--bg-soft)] to-transparent z-10" />
-        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-soft)] to-transparent z-10" />
-        <ul className="vscroll-track py-3 px-4 space-y-1.5 text-[12px] leading-tight text-[var(--ink-soft)]">
-          {[...subjects, ...subjects].map((s, i) => (
-            <li key={i} className="flex items-start gap-2 py-1 border-b border-dashed border-[var(--line-soft)]">
-              <span aria-hidden="true" className="text-[var(--ink-mute)] mt-0.5 shrink-0"><I.mail/></span>
-              <span className="truncate">{s}</span>
-            </li>
-          ))}
-        </ul>
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 items-start">
+      {/* LEFT — what you read: the chaotic inbox, scrolling */}
+      <div className="min-w-0">
+        <p className="text-[11px] uppercase tracking-widest text-[var(--ink-mute)] mb-2 text-center">What you read</p>
+        <div className="relative h-[320px] sm:h-[420px] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg-soft)] shadow-sm">
+          <div aria-hidden="true" className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[var(--bg-soft)] to-transparent z-10" />
+          <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-soft)] to-transparent z-10" />
+          <ul className="vscroll-track py-3 px-3.5 space-y-2 text-[12px] sm:text-[13px] leading-tight text-[var(--ink-soft)]">
+            {[...subjects, ...subjects].map((s, i) => (
+              <li key={i} className="flex items-start gap-2 py-1 border-b border-dashed border-[var(--line-soft)]">
+                <span aria-hidden="true" className="text-[var(--ink-mute)] mt-0.5 shrink-0"><I.mail/></span>
+                <span className="truncate">{s}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
-      {/* Down arrow */}
-      <div className="flex justify-center py-2.5 text-[var(--green-600)]">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M12 5v14M6 13l6 6 6-6"/>
-        </svg>
+      {/* RIGHT — what you get: the one clean email */}
+      <div className="min-w-0">
+        <p className="text-[11px] uppercase tracking-widest text-[var(--green-700)] mb-2 text-center">What you get</p>
+        <article className="bg-white rounded-2xl border border-[var(--green-300)] shadow-[0_24px_50px_-28px_rgba(5,150,105,0.45)] overflow-hidden h-[320px] sm:h-[420px] flex flex-col">
+          <div className="flex items-center gap-1.5 px-3.5 py-2.5 border-b border-[var(--line-soft)] text-[11px] text-[var(--ink-mute)] tnum">
+            <span className="w-2 h-2 rounded-full bg-[#fb7185]" />
+            <span className="w-2 h-2 rounded-full bg-[#fbbf24]" />
+            <span className="w-2 h-2 rounded-full bg-[var(--green-400)]" />
+            <span className="ml-1.5 truncate">Sun · 9:00 am</span>
+          </div>
+          <div className="p-3.5 sm:p-4 space-y-3.5 text-left overflow-hidden">
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-red">🔴 Action</span>
+              <ul className="mt-1.5 space-y-1 text-[12px] sm:text-[13px] text-[var(--ink)] leading-snug">
+                <li>Field trip slip <strong>+$14</strong> by Thu</li>
+                <li>Picture day reorder <strong>Mar 28</strong></li>
+              </ul>
+            </div>
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-amber">🟡 Important</span>
+              <ul className="mt-1.5 space-y-1 text-[12px] sm:text-[13px] text-[var(--ink)] leading-snug">
+                <li>PTA Tue <strong>7 pm</strong></li>
+                <li>Bus 217 reroute Mon</li>
+              </ul>
+            </div>
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-mute">⚪ Ignored</span>
+              <p className="mt-1.5 text-[12px] sm:text-[13px] text-[var(--ink-soft)] leading-snug">12 reply-all + promo blasts, grouped</p>
+            </div>
+          </div>
+        </article>
       </div>
-
-      {/* The one clean email */}
-      <article className="bg-white rounded-2xl border border-[var(--green-300)] shadow-[0_24px_50px_-28px_rgba(5,150,105,0.45)] overflow-hidden">
-        <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-[var(--line-soft)] text-[11px] text-[var(--ink-mute)] tnum">
-          <span className="w-2 h-2 rounded-full bg-[#fb7185]" />
-          <span className="w-2 h-2 rounded-full bg-[#fbbf24]" />
-          <span className="w-2 h-2 rounded-full bg-[var(--green-400)]" />
-          <span className="ml-1.5 truncate">Sun · 9:00 am</span>
-        </div>
-        <div className="p-4 space-y-3 text-left">
-          <div>
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-red">🔴 Action</span>
-            <ul className="mt-1.5 space-y-1 text-[13px] text-[var(--ink)] leading-snug">
-              <li>Field trip slip <strong>+$14</strong> by Thu</li>
-              <li>Picture day reorder <strong>Mar 28</strong></li>
-            </ul>
-          </div>
-          <div>
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-amber">🟡 Important</span>
-            <ul className="mt-1.5 space-y-1 text-[13px] text-[var(--ink)] leading-snug">
-              <li>PTA Tue <strong>7 pm</strong></li>
-              <li>Bus 217 reroute Mon</li>
-            </ul>
-          </div>
-          <div>
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-mute">⚪ Ignored</span>
-            <p className="mt-1.5 text-[13px] text-[var(--ink-soft)] leading-snug">12 reply-all + promo blasts, grouped</p>
-          </div>
-        </div>
-      </article>
     </div>
   )
 }

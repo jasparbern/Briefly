@@ -81,14 +81,19 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* 1. SHOW what it does */}
       <Hero onSignIn={handleCta} loading={loading} signedIn={signedIn} />
-      <AbridgeStrip />
-      <BeforeAfter />
+
+      {/* 2. BRIEFLY explain how + what */}
+      <How />
+
+      {/* 3. FEATURES */}
       <Sample />
       <Streams />
-      <How />
-      <Faq />
+
       <Pricing onSignIn={handleCta} loading={loading} signedIn={signedIn} />
+      <Faq />
       <Footer />
     </main>
   )
@@ -132,10 +137,9 @@ function NavBar({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading
       <nav className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
         <BrandLogo />
         <div className="flex items-center gap-1 text-sm">
-          <a href="#sample" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Sample</a>
           <a href="#how" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">How it works</a>
+          <a href="#sample" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Sample</a>
           <a href="/pricing" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">Pricing</a>
-          <a href="#faq" className="hidden sm:inline px-3 py-1.5 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors">FAQ</a>
           <button
             type="button"
             onClick={onSignIn}
@@ -151,7 +155,7 @@ function NavBar({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
- * Hero — parent-focused
+ * Hero — short headline, one subhead, live demo (chaos → digest)
  * ─────────────────────────────────────────────────────────────────────── */
 function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: boolean; signedIn: boolean }) {
   return (
@@ -160,11 +164,8 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
       <div aria-hidden="true" className="absolute inset-0 -z-10 dot-grid opacity-50" />
 
       <div className="relative max-w-6xl mx-auto grid md:grid-cols-12 gap-10 items-center">
-        <div className="md:col-span-7">
-          <p className="text-sm text-[var(--green-700)] font-medium mb-4">
-            Built for parents. Works for any inbox.
-          </p>
-          <h1 className="font-display text-[clamp(2.75rem,7vw,5.25rem)] leading-[0.95] tracking-tight text-balance">
+        <div className="md:col-span-6">
+          <h1 className="font-display text-[clamp(2.75rem,7vw,5rem)] leading-[0.95] tracking-tight text-balance">
             Your week of email,
             <br />
             <em className="text-[var(--green-700)]">summed up</em> for you.
@@ -186,7 +187,7 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
             <a href="#sample" className="btn btn-ghost text-base">See a real digest</a>
           </div>
 
-          {/* Trust row — the Gmail-access objection answered up front, not in fine print */}
+          {/* Trust row — the Gmail-access objection answered up front */}
           <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-[var(--ink-soft)]">
             <span className="inline-flex items-center gap-1.5">
               <span className="text-[var(--green-600)]" aria-hidden="true"><I.shield/></span>
@@ -196,46 +197,101 @@ function Hero({ onSignIn, loading, signedIn }: { onSignIn: () => void; loading: 
               <span className="text-[var(--green-600)]" aria-hidden="true"><I.check/></span>
               We never store your emails.
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="text-[var(--green-600)]" aria-hidden="true"><I.check/></span>
-              Never sold. Never trains AI.
-            </span>
           </div>
-          <p className="mt-3 text-xs text-[var(--ink-mute)]">
-            Free for one digest a week. Pro adds more, free for 14 days, no card.
-          </p>
         </div>
 
-        <div className="md:col-span-5 relative">
-          <PeekingDigest />
-          {/* One sticky note — the reader's own thought, said back to them */}
-          <div className="sticky-note absolute -bottom-10 -right-2 md:-right-6 rotate-[3deg] w-44 p-3 rounded-md font-display italic text-[13px] leading-snug select-none">
-            <span className="block">&ldquo;i&apos;m never gonna finish these.&rdquo;</span>
-            <span className="block not-italic text-[11px] font-sans mt-2 text-[#7a5d24]">you don&apos;t have to. we read them.</span>
-          </div>
+        <div className="md:col-span-6">
+          <HeroDemo />
         </div>
       </div>
     </section>
   )
 }
 
-/* ─────────────────────────────────────────────────────────────────────────
- * Abridge definition — explains the name right after the hero
- * ─────────────────────────────────────────────────────────────────────── */
-function AbridgeStrip() {
+/* The hero visual: a chaotic inbox scrolling on the left, the one clean email on the right. */
+function HeroDemo() {
+  const subjects = [
+    'PTA: Spring Fundraiser Volunteers Needed!!!',
+    'Mrs. Carter — homework packet (please print)',
+    'District: 2026-27 calendar draft',
+    'School Cafe: Breakfast menu, week of Mar 17',
+    'Coach Mike: Practice moved indoors Sat',
+    'Principal weekly — 14 updates inside',
+    'Bus 217 route change effective Monday',
+    'Library overdue: Diary of a Wimpy Kid',
+    'Spirit week starts Monday!',
+    'Reply all: thanks!! (Allison Park)',
+    'Reply all: 🙏 (Sam from room 4)',
+    'School Photos: pre-order deadline FRIDAY',
+    '5th grade promotion — RSVP needed',
+    'Field trip — chaperones sign up here',
+    'Lunch balance low for Maya ($2.18 left)',
+    'YEAR-END SHOW tickets are LIVE 🎭',
+  ]
   return (
-    <section className="px-6 pb-4 -mt-6">
-      <div className="reveal max-w-3xl mx-auto bg-[var(--bg-soft)] border-l-4 border-[var(--green-600)] rounded-r-xl px-6 py-5">
-        <div className="flex items-baseline gap-3 flex-wrap">
-          <span className="font-display text-2xl">abridge</span>
-          <span className="text-sm text-[var(--ink-mute)] tnum">/əˈbrɪdʒ/</span>
-          <span className="text-sm italic text-[var(--ink-soft)]">verb</span>
+    <div className="relative">
+      <div className="absolute inset-0 -z-10 blur-3xl opacity-60 bg-gradient-to-tr from-[var(--green-200)] via-[var(--green-100)] to-[var(--green-400)] rounded-[36px]" aria-hidden="true" />
+      <div className="grid grid-cols-5 gap-3 items-center">
+
+        {/* LEFT: the chaotic inbox, scrolling */}
+        <div className="col-span-2 min-w-0">
+          <p className="text-[10px] uppercase tracking-widest text-[var(--ink-mute)] mb-1.5 text-center">Your inbox</p>
+          <div className="relative h-[300px] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg-soft)]">
+            <div aria-hidden="true" className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[var(--bg-soft)] to-transparent z-10" />
+            <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-soft)] to-transparent z-10" />
+            <ul className="vscroll-track py-3 px-3 space-y-1.5 text-[11px] leading-tight text-[var(--ink-soft)]">
+              {[...subjects, ...subjects].map((s, i) => (
+                <li key={i} className="flex items-start gap-1.5 py-1 border-b border-dashed border-[var(--line-soft)]">
+                  <span aria-hidden="true" className="text-[var(--ink-mute)] mt-0.5 shrink-0"><I.mail/></span>
+                  <span className="truncate">{s}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <p className="mt-2 text-[var(--ink)] text-pretty">
-          to shorten a text without losing its meaning. We do this for your inbox.
-        </p>
+
+        {/* MIDDLE: the transform arrow */}
+        <div className="col-span-1 flex flex-col items-center justify-center gap-1 text-[var(--green-600)]">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-[var(--green-700)]">Abridgly</span>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M5 12h14M13 6l6 6-6 6"/>
+          </svg>
+        </div>
+
+        {/* RIGHT: the one clean email */}
+        <div className="col-span-2 min-w-0">
+          <p className="text-[10px] uppercase tracking-widest text-[var(--ink-mute)] mb-1.5 text-center">Your email</p>
+          <article className="bg-white rounded-2xl border border-[var(--green-300)] shadow-[0_24px_50px_-28px_rgba(5,150,105,0.45)] overflow-hidden">
+            <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[var(--line-soft)] text-[10px] text-[var(--ink-mute)] tnum">
+              <span className="w-2 h-2 rounded-full bg-[#fb7185]" />
+              <span className="w-2 h-2 rounded-full bg-[#fbbf24]" />
+              <span className="w-2 h-2 rounded-full bg-[var(--green-400)]" />
+              <span className="ml-1.5 truncate">Sun · 9:00 am</span>
+            </div>
+            <div className="p-3.5 space-y-3 text-left">
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-red">🔴 Action</span>
+                <ul className="mt-1.5 space-y-1 text-[12px] text-[var(--ink)] leading-snug">
+                  <li>Field trip slip <strong>+$14</strong> by Thu</li>
+                  <li>Picture day reorder <strong>Mar 28</strong></li>
+                </ul>
+              </div>
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-amber">🟡 Important</span>
+                <ul className="mt-1.5 space-y-1 text-[12px] text-[var(--ink)] leading-snug">
+                  <li>PTA Tue <strong>7 pm</strong></li>
+                  <li>Bus 217 reroute Mon</li>
+                </ul>
+              </div>
+              <div>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bucket-mute">⚪ Ignored</span>
+                <p className="mt-1.5 text-[12px] text-[var(--ink-soft)] leading-snug">12 reply-all + promo blasts, grouped</p>
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -247,32 +303,6 @@ function GoogleG() {
       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
     </svg>
-  )
-}
-
-function PeekingDigest() {
-  return (
-    <div className="relative max-w-md mx-auto md:ml-auto md:mr-0">
-      <div className="absolute inset-0 -z-10 blur-3xl opacity-60 bg-gradient-to-tr from-[var(--green-200)] via-[var(--green-100)] to-[var(--green-400)] rounded-[36px]" aria-hidden="true" />
-      <article className="bg-white rounded-3xl border border-[var(--line)] shadow-[0_30px_60px_-30px_rgba(5,150,105,0.4)] overflow-hidden -rotate-1 hover:rotate-0 transition-transform duration-500">
-        <div className="flex items-center gap-2 px-5 py-3 border-b border-[var(--line-soft)] text-xs text-[var(--ink-soft)] tnum">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#fb7185]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#fbbf24]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[var(--green-400)]" />
-          <span className="ml-3 truncate">Work this week · 2 sign-offs, 1 reschedule</span>
-        </div>
-        <div className="p-5 space-y-3 text-left">
-          <BucketRow color="bucket-red" emoji="🔴" title="Action Required" items={[
-            <>Sign off on the launch doc by <strong>Thu 5pm</strong>.</>,
-            <>Invoice from Acme due. <strong>$1,200</strong>.</>,
-          ]}/>
-          <BucketRow color="bucket-amber" emoji="🟡" title="Important" items={[
-            <>1:1 with Maya moved to <strong>Wed 3pm</strong>.</>,
-            <>Q3 OKR draft is live. Comments by Fri.</>,
-          ]}/>
-        </div>
-      </article>
-    </div>
   )
 }
 
@@ -290,75 +320,35 @@ function BucketRow({ color, emoji, title, items }: { color: string; emoji: strin
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
- * Before / After — animated scroll on the chaotic side
+ * How it works — briefly explain how + what
  * ─────────────────────────────────────────────────────────────────────── */
-function BeforeAfter() {
-  // School-flavored fake email subjects for the chaotic column
-  const subjects = [
-    'PTA: Spring Fundraiser Volunteers Needed!!! [reminder #4]',
-    'Mrs. Carter — homework packet PDF (please print at home)',
-    'District: 2026-27 calendar draft for public comment',
-    'School Cafe: Breakfast menu — week of March 17',
-    'Coach Mike: Soccer practice this Sat moved indoors',
-    'Principal weekly email — 14 important updates inside',
-    'Bus 217 route change effective Monday — read carefully',
-    'Library overdue notice: 1 book — Diary of a Wimpy Kid',
-    'Spirit week starts Monday! Theme days attached.',
-    'Reply all: thanks!!  (Allison Park)',
-    'Reply all: + thank you so much  (David Liu)',
-    'Reply all: 🙏  (Sam from room 4)',
-    'School Photos: pre-order deadline FRIDAY',
-    '5th grade promotion ceremony — RSVP needed',
-    'Nurse: pollen alert. Inhaler reminders.',
-    'Picture day moved (formerly Mar 14 → Mar 28)',
-    'Field trip — chaperones, sign up here',
-    'Lunch balance low for Maya ($2.18 remaining)',
-    'Reply all: count me in for snacks  (PTA Liz)',
-    'YEAR-END SHOW tickets are LIVE 🎭',
+function How() {
+  const steps = [
+    { icon: <I.shield/>, title: 'Connect your Gmail', body: 'Sign in with Google. Read-only — we can read your mail but can\'t send, change, or delete anything.' },
+    { icon: <I.mail/>,   title: 'Tell us what to watch', body: 'List the senders you care about, or describe a topic and we find the matching emails.' },
+    { icon: <I.cal/>,    title: 'Pick when to get it', body: 'Daily, weekly, or set days. At that time we send one email with everything that matters.' },
   ]
   return (
-    <section className="py-16 px-6 bg-white border-t border-[var(--line-soft)]">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-12 gap-10 items-center">
-        <div className="md:col-span-4 reveal">
-          <h2 className="font-display text-4xl md:text-5xl leading-[1.02] tracking-tight text-balance">
-            <span className="tnum">247</span> emails this week.
+    <section id="how" className="py-16 px-6 bg-[var(--bg-soft)] border-y border-[var(--line-soft)]">
+      <div className="max-w-5xl mx-auto">
+        <div className="reveal text-center mb-10">
+          <h2 className="font-display text-4xl md:text-5xl text-balance">
+            Three steps. <em className="text-[var(--green-700)]">Two minutes.</em>
           </h2>
-          <h2 className="font-display text-4xl md:text-5xl leading-[1.02] tracking-tight text-balance mt-2">
-            <em className="text-[var(--green-700)]">One</em> worth reading.
-          </h2>
-          <p className="mt-5 text-[var(--ink)] text-pretty">
-            We read all of it, keep the few emails that need you, and leave the rest out. Below is a real digest from a school inbox.
-          </p>
         </div>
-
-        <div className="md:col-span-8 grid grid-cols-5 gap-4 reveal">
-          {/* BEFORE — animated vertical scroll */}
-          <div className="col-span-2 min-w-0">
-            <p className="text-xs uppercase tracking-widest text-[var(--ink-mute)] mb-2">Before</p>
-            <div className="relative h-[280px] overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--bg-soft)]">
-              <div aria-hidden="true" className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-[var(--bg-soft)] to-transparent z-10" />
-              <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--bg-soft)] to-transparent z-10" />
-              <ul className="vscroll-track py-3 px-4 space-y-1.5 text-[12px] leading-tight text-[var(--ink-soft)]">
-                {[...subjects, ...subjects].map((s, i) => (
-                  <li key={i} className="flex items-start gap-2 py-1 border-b border-dashed border-[var(--line-soft)]">
-                    <span aria-hidden="true" className="text-[var(--ink-mute)] mt-0.5"><I.mail/></span>
-                    <span className="truncate">{s}</span>
-                  </li>
-                ))}
-              </ul>
+        <div className="grid md:grid-cols-3 gap-5">
+          {steps.map((s, i) => (
+            <div key={s.title} className="reveal" style={{ transitionDelay: `${i * 120}ms` }}>
+              <div className="bg-white rounded-2xl border border-[var(--line)] p-6 h-full hover:border-[var(--green-300)] hover:-translate-y-1 transition-all duration-300 ease-out shadow-sm hover:shadow-lg">
+                <div className="flex items-center justify-between text-[var(--green-700)]">
+                  {s.icon}
+                  <span className="font-display text-2xl italic text-[var(--green-700)] tnum">0{i + 1}</span>
+                </div>
+                <h3 className="mt-5 text-base font-semibold">{s.title}</h3>
+                <p className="mt-2 text-sm text-[var(--ink)] text-pretty leading-relaxed">{s.body}</p>
+              </div>
             </div>
-          </div>
-
-          {/* AFTER */}
-          <div className="col-span-3 min-w-0">
-            <p className="text-xs uppercase tracking-widest text-[var(--ink-mute)] mb-2">After</p>
-            <div className="p-5 bg-white border border-[var(--green-300)] rounded-2xl h-[280px] shadow-sm flex flex-col gap-3 justify-center">
-              <span className="inline-flex w-max items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold bucket-red">🔴 Action Required</span>
-              <div className="text-sm text-[var(--ink)]">Field trip slip <strong>+$14</strong> by Thu. Picture day reorder <strong>Mar 28</strong>.</div>
-              <span className="inline-flex w-max items-center gap-2 px-2.5 py-1 rounded-full text-[11px] font-semibold bucket-amber">🟡 Important</span>
-              <div className="text-sm text-[var(--ink)]">PTA Tue <strong>7 pm</strong>. Bus 217 reroute Mon.</div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
@@ -366,25 +356,25 @@ function BeforeAfter() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
- * Sample — a full digest, subscriptions flavor
+ * Sample — the full email you get
  * ─────────────────────────────────────────────────────────────────────── */
 function Sample() {
   return (
-    <section id="sample" className="py-16 px-6 bg-[var(--bg-soft)] border-y border-[var(--line-soft)]">
+    <section id="sample" className="py-16 px-6 bg-white">
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div className="reveal">
           <h2 className="font-display text-4xl md:text-5xl leading-[1.05] text-balance">
             This is the email <em className="text-[var(--green-700)]">you get</em>.
           </h2>
           <p className="mt-5 text-[var(--ink)] text-pretty">
-            We sort everything into four groups so you know what needs you and what doesn&apos;t:
+            Everything is sorted into four groups, so you know what needs you and what doesn&apos;t:
           </p>
           <ul className="mt-6 space-y-2.5 text-sm">
             {[
-              ['🔴', 'Renewals, payments, things you have to do'],
-              ['🟡', 'Updates worth knowing, no action needed'],
+              ['🔴', 'Things you have to do'],
+              ['🟡', 'Worth knowing, no action needed'],
               ['🟢', 'Optional — deals, drops, signups'],
-              ['⚪', 'Promo blasts and noise, grouped'],
+              ['⚪', 'Noise, grouped and skippable'],
             ].map(([e, t]) => (
               <li key={t} className="flex items-start gap-3">
                 <span aria-hidden="true" className="text-base leading-6">{e}</span>
@@ -410,7 +400,7 @@ function FullDigest() {
         <span>Abridgly</span>
       </div>
       <h3 className="font-display text-2xl mt-3 leading-tight">📬 Your week of subscriptions — 1 renewal, 3 reads</h3>
-      <p className="text-[var(--ink-mute)] text-xs mt-1">28 emails scanned. Here&apos;s what was worth your time.</p>
+      <p className="text-[var(--ink-mute)] text-xs mt-1">Here&apos;s what was worth your time.</p>
 
       <div className="mt-5 space-y-5">
         <BucketRow color="bucket-red" emoji="🔴" title="Action Required" items={[
@@ -420,7 +410,6 @@ function FullDigest() {
         <BucketRow color="bucket-amber" emoji="🟡" title="Important" items={[
           <>Lenny&apos;s Newsletter: new post on growth loops.</>,
           <>NYT: 3 long reads saved to your feed.</>,
-          <>Substack inbox digest now arrives <strong>Fri</strong>.</>,
         ]}/>
         <BucketRow color="bucket-good" emoji="🟢" title="Opportunity" items={[
           <>Apple TV+ free month if you resub by <strong>Apr 4</strong>.</>,
@@ -435,18 +424,18 @@ function FullDigest() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
- * Streams — one digest per context (school, work, packages, anything)
+ * Streams — one digest per context
  * ─────────────────────────────────────────────────────────────────────── */
 function Streams() {
   return (
-    <section className="py-16 px-6 bg-white">
+    <section className="py-16 px-6 bg-[var(--bg-soft)] border-y border-[var(--line-soft)]">
       <div className="max-w-5xl mx-auto">
         <div className="reveal max-w-2xl">
           <h2 className="font-display text-4xl md:text-5xl leading-[1.05] text-balance">
             One inbox. <em className="text-[var(--green-700)]">A separate digest for each thing.</em>
           </h2>
           <p className="mt-4 text-[var(--ink)] text-pretty">
-            Set up a stream for each thing you care about. You tell each one which senders or topics to watch and when to send. They never mix together.
+            Make a separate digest for each thing you care about. Each one watches its own senders or topics on its own schedule. They never mix.
           </p>
         </div>
 
@@ -486,42 +475,6 @@ function StreamCard({ name, cadence, senders }: { name: string; cadence: string;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
- * How it works
- * ─────────────────────────────────────────────────────────────────────── */
-function How() {
-  const steps = [
-    { icon: <I.shield/>, title: 'Connect your Gmail', body: 'Sign in with Google. We get read-only access, so we can read your mail but can\'t send, change, or delete anything.' },
-    { icon: <I.mail/>,   title: 'Tell us what to watch', body: 'List the senders you care about, or describe a topic and we find the matching emails for you.' },
-    { icon: <I.cal/>,    title: 'Pick when to get it', body: 'Daily, weekly, or set days. At that time we send one email with everything that matters.' },
-  ]
-  return (
-    <section id="how" className="py-16 px-6 bg-[var(--bg-soft)] border-y border-[var(--line-soft)]">
-      <div className="max-w-5xl mx-auto">
-        <div className="reveal text-center mb-10">
-          <h2 className="font-display text-4xl md:text-5xl text-balance">
-            Three steps. <em className="text-[var(--green-700)]">Two minutes.</em>
-          </h2>
-        </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          {steps.map((s, i) => (
-            <div key={s.title} className="reveal" style={{ transitionDelay: `${i * 120}ms` }}>
-              <div className="bg-white rounded-2xl border border-[var(--line)] p-6 h-full hover:border-[var(--green-300)] hover:-translate-y-1 transition-all duration-300 ease-out shadow-sm hover:shadow-lg">
-                <div className="flex items-center justify-between text-[var(--green-700)]">
-                  {s.icon}
-                  <span className="font-display text-2xl italic text-[var(--green-700)] tnum">0{i + 1}</span>
-                </div>
-                <h3 className="mt-5 text-base font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm text-[var(--ink)] text-pretty leading-relaxed">{s.body}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ─────────────────────────────────────────────────────────────────────────
  * FAQ
  * ─────────────────────────────────────────────────────────────────────── */
 function Faq() {
@@ -531,30 +484,21 @@ function Faq() {
       a: 'Anything with a deadline, dollar amount, signed form, or schedule change lands in Action Required or Important. Reply-all noise gets grouped, not dropped.',
     },
     {
+      q: 'Do you keep my emails?',
+      a: 'No. We read them only to build your digest and discard them the second it sends. We save your settings and the digests themselves, nothing more. Never sold, never used to train AI.',
+    },
+    {
       q: 'Can someone else get the same digest?',
       a: 'Yes. Set a "send to" email on any stream. You own the Gmail. They get the recap.',
     },
     {
-      q: 'Can I run different schedules for different things?',
-      a: 'Yes. Each stream gets its own cadence. Work daily, school Sundays, packages whenever. They never mix.',
-    },
-    {
-      q: 'What does Abridgly do with my email?',
-      a: 'Reads it in memory, writes your digest, then discards it. We never store your emails. No selling, no training AI, no ads.',
-    },
-    {
-      q: 'Do you keep my emails?',
-      a: 'No. We read them only to build your digest and discard them the second it sends. We save your settings and the digests themselves, nothing more.',
-    },
-    {
       q: 'How much does it cost?',
-      a: 'Free for one stream, weekly, 5 senders. Pro is $7/month: 5 streams, daily delivery, 25 senders each, send to any inbox. Pro starts with 14 days free, no card.',
+      a: 'Free for one digest a week, 5 senders. Pro is $7/month: 5 digests, daily delivery, 25 senders each, send to any inbox. Pro starts with 14 days free, no card.',
     },
   ]
   return (
     <section id="faq" className="py-16 px-6 bg-white">
       <div className="max-w-3xl mx-auto">
-
         <div className="reveal mb-8">
           <h2 className="font-display text-4xl md:text-5xl text-balance">
             Questions people ask.
@@ -584,14 +528,13 @@ function Pricing({ onSignIn, loading, signedIn }: { onSignIn: () => void; loadin
     <section id="pricing" className="relative py-20 px-6 bg-[var(--bg-deep)] text-white overflow-hidden">
       <div aria-hidden="true" className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-[var(--green-600)] opacity-25 rounded-full blur-3xl" />
       <div className="relative max-w-3xl mx-auto text-center reveal">
-        <span className="inline-block text-xs font-semibold tracking-widest uppercase text-[var(--green-300)] mb-4">Pricing</span>
         <h2 className="font-display text-5xl md:text-6xl text-balance">
           Free forever.
           <br />
           <em className="text-[var(--green-300)]">$7 when you want more.</em>
         </h2>
-        <p className="mt-5 text-white/70 max-w-lg mx-auto">
-          Free gives you one digest a week. Pro is $7 a month: up to 5 separate digests, daily delivery, and the option to send them to any inbox. Pro is free for the first 14 days and we don&apos;t ask for a card to start.
+        <p className="mt-5 text-white/70 max-w-md mx-auto">
+          Free gets you one digest a week. Pro adds more digests and daily delivery — free for 14 days, no card.
         </p>
 
         <div className="mt-9 flex flex-wrap items-center justify-center gap-3">

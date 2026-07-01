@@ -133,6 +133,20 @@ async function selectStreamsForToday(supabase: ReturnType<typeof getServiceClien
 }
 
 async function processStream(stream: StreamRow) {
+  // Errors here are otherwise swallowed by Promise.allSettled and hidden inside a
+  // 200 response — log them with context so failed sends are debuggable.
+  try {
+    return await runStream(stream)
+  } catch (err) {
+    console.error(
+      `[digest] stream ${stream.id} (user ${stream.user_id}, mode ${stream.filter_mode}) failed:`,
+      err instanceof Error ? (err.stack ?? err.message) : String(err)
+    )
+    throw err
+  }
+}
+
+async function runStream(stream: StreamRow) {
   const supabase = getServiceClient()
 
   const { data: userData } = await supabase.auth.admin.getUserById(stream.user_id)
